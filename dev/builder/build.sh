@@ -89,4 +89,9 @@ if [[ "$ARGS" == *\ \-t\ * ]]; then
 fi
 
 echo ""
+echo "Running custom script"
+
+custom/custom.sh
+
+echo ""
 echo "Release created in the \"release\" directory."
