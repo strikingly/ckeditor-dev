@@ -95,8 +95,13 @@ Special outer level classes used in this file:
 .cke_top
 {
 	/*border: 1px solid #b2b2b2;*/
+
 	/* Allow breaking toolbars when in a narrow editor. (#9947) */
 	white-space: normal;
+
+	background: #333;
+	border-radius: 3px;
+	overflow: hidden;
 }
 
 .cke_bottom

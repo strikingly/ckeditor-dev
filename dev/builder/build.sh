@@ -71,7 +71,9 @@ then
 	VERSION=$TAG
 fi
 
-java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build ../../ release $JAVA_ARGS --version="$VERSION" --revision="$REVISION" --overwrite
+java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build ../../ release $JAVA_ARGS --version="$VERSION" --revision="$REVISION" --overwrite --no-zip --no-tar --skip-omitted-in-build-config
+
+java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build-skin ../../skins/clean release/ckeditor/skins/clean --overwrite
 
 # Copy and build tests
 if [[ "$ARGS" == *\ \-t\ * ]]; then
@@ -87,11 +89,6 @@ if [[ "$ARGS" == *\ \-t\ * ]]; then
 
 	(cd release/ckeditor &&	npm install && bender init)
 fi
-
-echo ""
-echo "Running custom script"
-
-custom/custom.sh
 
 echo ""
 echo "Release created in the \"release\" directory."

@@ -334,7 +334,7 @@ CKEDITOR.plugins.add( 'floatpanel', {
 						} else if ( spaceAfter < rectWidth ) {
 							// Flip to show on left.
 							if ( spaceBefore > rectWidth )
-								left -= rectWidth;
+								left = left - rectWidth + offsetParent.$.offsetWidth;
 							// Align to window right.
 							else if ( viewportSize.width > rectWidth )
 								left = left - rect.right + viewportSize.width;
@@ -351,7 +351,7 @@ CKEDITOR.plugins.add( 'floatpanel', {
 						if ( spaceBelow < rectHeight ) {
 							// Flip to show above.
 							if ( spaceAbove > rectHeight )
-								top -= rectHeight;
+								top = top - rectHeight - offsetParent.$.offsetHeight + 1;
 							// Align to window bottom.
 							else if ( viewportSize.height > rectHeight )
 								top = top - rect.bottom + viewportSize.height;
@@ -364,8 +364,8 @@ CKEDITOR.plugins.add( 'floatpanel', {
 						// position and horizontal scrolls. Here we have a
 						// series of hacks to workaround it. (#6146)
 						if ( CKEDITOR.env.ie ) {
-							var offsetParent = new CKEDITOR.dom.element( element.$.offsetParent ),
-								scrollParent = offsetParent;
+							var offsetParentIE = new CKEDITOR.dom.element( element.$.offsetParent ),
+								scrollParent = offsetParentIE;
 
 							// Quirks returns <body>, but standards returns <html>.
 							if ( scrollParent.getName() == 'html' )
@@ -376,7 +376,7 @@ CKEDITOR.plugins.add( 'floatpanel', {
 								if ( CKEDITOR.env.ie8Compat )
 									left -= element.getDocument().getDocumentElement().$.scrollLeft * 2;
 								else
-									left -= ( offsetParent.$.scrollWidth - offsetParent.$.clientWidth );
+									left -= ( offsetParentIE.$.scrollWidth - offsetParentIE.$.clientWidth );
 							}
 						}
 

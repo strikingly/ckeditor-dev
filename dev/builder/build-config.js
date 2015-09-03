@@ -18,6 +18,7 @@ var CKBUILDER_CONFIG = {
 		'.editorconfig',
 		'.gitignore',
 		'.gitattributes',
+		'.gitmodules',
 		'gruntfile.js',
 		'.idea',
 		'.jscsrc',
@@ -40,15 +41,19 @@ var CKBUILDER_CONFIG = {
 		// colorbutton: 1,
 		// colordialog: 1,
 		// contextmenu: 1,
+		defaultstyle: 1,
 		// dialogadvtab: 1,
 		// div: 1,
 		// elementspath: 1,
 		// enterkey: 1,
 		entities: 1,
+		// popup: 1,
 		// filebrowser: 1,
 		// find: 1,
 		// flash: 1,
 		floatingspace: 1,
+		fontfamily: 1,
+		fontsize: 1,
 		// font: 1,
 		// format: 1,
 		// forms: 1,
@@ -67,6 +72,10 @@ var CKBUILDER_CONFIG = {
 		// newpage: 1,
 		// pagebreak: 1,
 		pastefromword: 1,
+		panel: 1,
+		floatpanel: 1,
+		menu: 1,
+		menubutton: 1,
 		// pastetext: 1,
 		// preview: 1,
 		// print: 1,
@@ -85,7 +94,13 @@ var CKBUILDER_CONFIG = {
 		// tabletools: 1,
 		// templates: 1,
 		toolbar: 1,
-		undo: 1,
+		undo: 1
+		// strikinglylink: 1
+		// scayt: 1
 		// wysiwygarea: 1
-	}
+	},
+	js: [
+		'release/ckeditor/lang/en.js',
+		'release/ckeditor/styles.js'
+	]
 };
