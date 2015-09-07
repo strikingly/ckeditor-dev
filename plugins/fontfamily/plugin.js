@@ -7,7 +7,7 @@ CKEDITOR.plugins.add( 'fontfamily', {
 		});
 		editor.addCommand( 'fontfamily', cmd );
 		editor.ui.addButton( 'FontFamily', {
-			label: 'Font Family',
+			label: 'Change Font Family',
 			command: 'fontfamily',
 			toolbar: 'basicstyles'
 		});
