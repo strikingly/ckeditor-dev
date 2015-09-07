@@ -35,27 +35,27 @@ CKEDITOR.plugins.add( 'fontsize', {
 			selection.selectBookmarks( bookmarks );
 		}
 
-		var xsmall = new sizeCommand( editor, 'fontsizexsmall', 60 );
-		var small = new sizeCommand( editor, 'fontsizesmall', 80 );
-		var medium = new sizeCommand( editor, 'fontsizemedium', 100 );
-		var large = new sizeCommand( editor, 'fontsizelarge', 130 );
-		var xlarge = new sizeCommand( editor, 'fontsizexlarge', 160 );
+		var xsmall = new sizeCommand( editor, 'fontsizexsmaller', 60 );
+		var small = new sizeCommand( editor, 'fontsizesmaller', 80 );
+		var medium = new sizeCommand( editor, 'fontsizenormal', 100 );
+		var large = new sizeCommand( editor, 'fontsizelarger', 130 );
+		var xlarge = new sizeCommand( editor, 'fontsizexlarger', 160 );
 
-		editor.addCommand( 'fontsizexsmall', xsmall );
-		editor.addCommand( 'fontsizesmall', small );
-		editor.addCommand( 'fontsizemedium', medium );
-		editor.addCommand( 'fontsizelarge', large );
-		editor.addCommand( 'fontsizexlarge', xlarge );
+		editor.addCommand( 'fontsizexsmaller', xsmall );
+		editor.addCommand( 'fontsizesmaller', small );
+		editor.addCommand( 'fontsizenormal', medium );
+		editor.addCommand( 'fontsizelarger', large );
+		editor.addCommand( 'fontsizexlarger', xlarge );
 
 		editor.ui.add( 'FontSize', CKEDITOR.UI_MENUBUTTON, {
-			label: 'Font Size',
+			label: 'Change Font Size',
 			onMenu: function () {
 				return {
-					fontsizeXSmall: CKEDITOR.TRISTATE_OFF,
-					fontsizeSmall: CKEDITOR.TRISTATE_OFF,
-					fontsizeMedium: CKEDITOR.TRISTATE_OFF,
-					fontsizeLarge: CKEDITOR.TRISTATE_OFF,
-					fontsizeXLarge: CKEDITOR.TRISTATE_OFF
+					fontsizeXSmaller: CKEDITOR.TRISTATE_OFF,
+					fontsizeSmaller: CKEDITOR.TRISTATE_OFF,
+					fontsizeNormal: CKEDITOR.TRISTATE_OFF,
+					fontsizeLarger: CKEDITOR.TRISTATE_OFF,
+					fontsizeXLarger: CKEDITOR.TRISTATE_OFF
 				};
 			}
 		});
@@ -63,30 +63,30 @@ CKEDITOR.plugins.add( 'fontsize', {
 		var menuGroup = 'fontsizeButton';
 		editor.addMenuGroup( menuGroup );
 		editor.addMenuItems({
-			fontsizeXSmall: {
-				label: 'Extra Small',
+			fontsizeXSmaller: {
+				label: 'Extra Smaller',
 				group: menuGroup,
-				command: 'fontsizexsmall'
+				command: 'fontsizexsmaller'
 			},
-			fontsizeSmall: {
-				label: 'Small',
+			fontsizeSmaller: {
+				label: 'Smaller',
 				group: menuGroup,
-				command: 'fontsizesmall'
+				command: 'fontsizesmaller'
 			},
-			fontsizeMedium: {
-				label: 'Medium',
+			fontsizeNormal: {
+				label: 'Normal',
 				group: menuGroup,
-				command: 'fontsizemedium'
+				command: 'fontsizenormal'
 			},
-			fontsizeLarge: {
-				label: 'Large',
+			fontsizeLarger: {
+				label: 'Larger',
 				group: menuGroup,
-				command: 'fontsizelarge'
+				command: 'fontsizelarger'
 			},
-			fontsizeXLarge: {
-				label: 'Extra Large',
+			fontsizeXLarger: {
+				label: 'Extra Larger',
 				group: menuGroup,
-				command: 'fontsizexlarge'
+				command: 'fontsizexlarger'
 			}
 		});
 	}
