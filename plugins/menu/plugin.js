@@ -82,7 +82,7 @@ CKEDITOR.plugins.add( 'menu', {
 ( function() {
 	var menuItemSource = '<span class="cke_menuitem">' +
 		'<a id="{id}"' +
-		' class="cke_menubutton cke_menubutton__{name} cke_menubutton_{state} {cls}" href="{href}"' +
+		' class="cke_menubutton cke_menubutton__{name} cke_menubutton_{state} {cls}"' +
 		' title="{title}"' +
 		' tabindex="-1"' +
 		'_cke_focus=1' +
@@ -488,7 +488,6 @@ CKEDITOR.plugins.add( 'menu', {
 					hasPopup: hasSubMenu ? 'true' : 'false',
 					disabled: state == CKEDITOR.TRISTATE_DISABLED,
 					title: this.label,
-					href: 'javascript:void(\'' + ( this.label || '' ).replace( "'" + '' ) + '\')', // jshint ignore:line
 					hoverFn: menu._.itemOverFn,
 					moveOutFn: menu._.itemOutFn,
 					clickFn: menu._.itemClickFn,

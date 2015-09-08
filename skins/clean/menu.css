@@ -179,3 +179,19 @@ Special outer level classes used in this file:
 	vertical-align: middle;
 	display: inline;
 }
+
+.cke_menubutton__fontsizeSmall .cke_menubutton_label {
+	font-size: 120%;
+}
+
+.cke_menubutton__fontsizeNormal .cke_menubutton_label {
+	font-size: 140%;
+}
+
+.cke_menubutton__fontsizeLarge .cke_menubutton_label {
+	font-size: 160%;
+}
+
+.cke_menubutton__fontsizeLarger .cke_menubutton_label {
+	font-size: 180%;
+}
