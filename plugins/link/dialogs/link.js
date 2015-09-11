@@ -411,13 +411,6 @@
 					delete this._.selectedElement;
 				}
 			},
-			onLoad: function() {
-				if ( !editor.config.linkShowAdvancedTab )
-					this.hidePage( 'advanced' ); //Hide Advanded tab.
-
-				if ( !editor.config.linkShowTargetTab )
-					this.hidePage( 'target' ); //Hide Target tab.
-			},
 			// Inital focus on 'url' field if link is of type URL.
 			onFocus: function() {
 				var linkType = this.getContentElement( 'info', 'linkType' ),

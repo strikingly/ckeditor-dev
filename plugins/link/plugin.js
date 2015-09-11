@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
@@ -466,9 +466,10 @@
 
 			if ( !retval.type ) {
 				if ( ( anchorMatch = href.match( anchorRegex ) ) ) {
-					retval.type = 'anchor';
-					retval.anchor = {};
-					retval.anchor.name = retval.anchor.id = anchorMatch[ 1 ];
+					retval.type = 'url';
+					retval.url = {};
+					retval.url.protocol = '';
+					retval.url.url = anchorMatch[0];
 				}
 				// Protected email link as encoded string.
 				else if ( ( emailMatch = href.match( emailRegex ) ) ) {
