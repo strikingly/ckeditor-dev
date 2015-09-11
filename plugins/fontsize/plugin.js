@@ -15,18 +15,17 @@ CKEDITOR.plugins.add( 'fontsize', {
 			}
 
 			var bookmarks = selection.createBookmarks();
-			var ranges = selection.getRanges();
 
-			for (var i = ranges.length - 1; i >= 0; i--) {
-				var iterator = ranges[ i ].createIterator();
-				iterator.enlargeBr = true;
+			var range = editor.createRange();
+			range.selectNodeContents( editor.editable() );
+			var iterator = range.createIterator();
+			iterator.enlargeBr = true;
 
-				while ( block = iterator.getNextParagraph( 'p' ) ) {
-					if ( block.isReadOnly() ) continue;
-					block.removeStyle( 'font-size' );
-					if ( this.value !== 100 ) {
-						block.setStyle( 'font-size', this.value + '%' );
-					}
+			while ( block = iterator.getNextParagraph( 'p' ) ) {
+				if ( block.isReadOnly() ) continue;
+				block.removeStyle( 'font-size' );
+				if ( this.value !== 100 ) {
+					block.setStyle( 'font-size', this.value + '%' );
 				}
 			}
 
