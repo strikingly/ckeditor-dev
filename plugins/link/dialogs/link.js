@@ -275,9 +275,15 @@
 						label: linkLang.emailAddress,
 						validate: function() {
 							var dialog = this.getDialog();
+							var emailRegex = /.+@.+/;
 
 							if ( !dialog.getContentElement( 'info', 'linkType' ) || dialog.getValueOf( 'info', 'linkType' ) != 'email' )
 								return true;
+
+							if (!emailRegex.test( this.getValue() )) {
+								alert('Invalid email address');
+								return false;
+							}
 						},
 						setup: function( data ) {
 							if ( data.email )
