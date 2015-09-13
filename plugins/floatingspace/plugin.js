@@ -148,15 +148,14 @@
 					else
 						changeMode( 'bottom' );
 
-					var mid = viewRect.width / 2,
-						alignSide, offset;
+					var alignSide, offset;
 
 					if ( config.floatSpacePreferRight ) {
 						alignSide = 'right';
 					} else if ( editorRect.left > 0 && editorRect.right < viewRect.width && editorRect.width > spaceRect.width ) {
 						alignSide = config.contentsLangDirection == 'rtl' ? 'right' : 'left';
 					} else {
-						alignSide = mid - editorRect.left > editorRect.right - mid ? 'left' : 'right';
+						alignSide = 'left';
 					}
 
 					// (#9769) If viewport width is less than space width,
