@@ -57,7 +57,7 @@
 							updatePos( 'absolute', 'top', editorPos.y - spaceHeight - dockedOffsetY );
 							break;
 						case 'pin':
-							updatePos( 'fixed', 'top', pinnedOffsetY );
+							updatePos( 'fixed', 'top', pinnedOffsetY + pushedOffsetY );
 							break;
 						case 'bottom':
 							updatePos( 'absolute', 'top', editorPos.y + ( editorRect.height || editorRect.bottom - editorRect.top ) + dockedOffsetY );
@@ -95,6 +95,7 @@
 					viewRect = win.getViewPaneSize();
 					spaceHeight = spaceRect.height;
 					pageScrollX = scrollOffset( 'left' );
+					pushedOffsetY = config.floatSpacePushedOffsetY ? config.floatSpacePushedOffsetY() : 0;
 
 					// We initialize it as pin mode.
 					if ( !mode ) {
@@ -115,7 +116,7 @@
 					// |   +------------------ Editor -+   |
 					// |   |                           |   |
 					//
-					if ( spaceHeight + dockedOffsetY <= editorRect.top )
+					if ( spaceHeight + dockedOffsetY + pushedOffsetY <= editorRect.top )
 						changeMode( 'top' );
 
 					//     +- - - - - - - - -  Editor -+
@@ -130,7 +131,7 @@
 					// |   +---------------------------+   |
 					// +-----------------------------------+
 					//
-					else if ( spaceHeight + dockedOffsetY > viewRect.height - editorRect.bottom )
+					else if ( spaceHeight + dockedOffsetY + pushedOffsetY > viewRect.height - editorRect.bottom )
 						changeMode( 'pin' );
 
 					//     +- - - - - - - - -  Editor -+
@@ -155,7 +156,7 @@
 					} else if ( editorRect.left > 0 && editorRect.right < viewRect.width && editorRect.width > spaceRect.width ) {
 						alignSide = config.contentsLangDirection == 'rtl' ? 'right' : 'left';
 					} else {
-						alignSide = 'left';
+						alignSide = viewRect.width > spaceRect.width && editorRect.left + spaceRect.width > viewRect.width ? 'right' : 'left';
 					}
 
 					// (#9769) If viewport width is less than space width,
