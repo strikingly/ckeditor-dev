@@ -1,6 +1,14 @@
 CKEDITOR.plugins.add( 'fontsize', {
 	requires: 'menubutton',
 	init: function(editor) {
+		function getSize(element) {
+			var size = element.getStyle( 'font-size' );
+			if (size.slice(-1) === '%') {
+				return parseInt(size, 10);
+			}
+			return 100;
+		}
+
 		function sizeCommand(editor, name, value) {
 			this.editor = editor;
 			this.name = name;
@@ -49,12 +57,24 @@ CKEDITOR.plugins.add( 'fontsize', {
 		editor.ui.add( 'FontSize', CKEDITOR.UI_MENUBUTTON, {
 			label: 'Change Font Size',
 			onMenu: function () {
+				var size;
+				var selection = editor.getSelection();
+				if (!selection) {
+					size = 100;
+				} else {
+					var range = selection.getRanges()[0];
+					var iterator = range.createIterator();
+					iterator.enlargeBr = true;
+					block = iterator.getNextParagraph( 'p' );
+					size = getSize(block);
+				}
+
 				return {
-					fontsizeSmaller: CKEDITOR.TRISTATE_OFF,
-					fontsizeSmall: CKEDITOR.TRISTATE_OFF,
-					fontsizeNormal: CKEDITOR.TRISTATE_OFF,
-					fontsizeLarge: CKEDITOR.TRISTATE_OFF,
-					fontsizeLarger: CKEDITOR.TRISTATE_OFF
+					fontsizeSmaller: size === 60 ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF,
+					fontsizeSmall: size === 80 ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF,
+					fontsizeNormal: size === 100 ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF,
+					fontsizeLarge: size === 130 ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF,
+					fontsizeLarger: size === 160 ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF
 				};
 			}
 		});

@@ -120,12 +120,9 @@ Special outer level classes used in this file:
 	filter: alpha(opacity=30);
 }
 
-.cke_menubutton_on
+.cke_menubutton.cke_menubutton_on
 {
-	border: 1px solid #dedede;
-	background-color: #f2f2f2;
-
-	box-shadow: 0 0 2px rgba(0,0,0,.1) inset;
+	background-color: #555;
 }
 
 .cke_menubutton_on .cke_menubutton_icon
@@ -138,6 +135,13 @@ Special outer level classes used in this file:
 .cke_menubutton:active
 {
 	background-color: #555;
+}
+
+.cke_menubutton.cke_menubutton_on:hover,
+.cke_menubutton.cke_menubutton_on:focus,
+.cke_menubutton.cke_menubutton_on:active
+{
+	background-color: #777;
 }
 
 .cke_panel_frame .cke_menubutton_label
