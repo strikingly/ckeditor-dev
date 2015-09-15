@@ -465,14 +465,7 @@
 			}
 
 			if ( !retval.type ) {
-				if ( ( anchorMatch = href.match( anchorRegex ) ) ) {
-					retval.type = 'url';
-					retval.url = {};
-					retval.url.protocol = '';
-					retval.url.url = anchorMatch[0];
-				}
-				// Protected email link as encoded string.
-				else if ( ( emailMatch = href.match( emailRegex ) ) ) {
+				if ( ( emailMatch = href.match( emailRegex ) ) ) {
 					var subjectMatch = href.match( emailSubjectRegex ),
 						bodyMatch = href.match( emailBodyRegex );
 
@@ -483,11 +476,10 @@
 					bodyMatch && ( email.body = decodeURIComponent( bodyMatch[ 1 ] ) );
 				}
 				// urlRegex matches empty strings, so need to check for href as well.
-				else if ( href && ( urlMatch = href.match( urlRegex ) ) ) {
+				else if ( href ) {
 					retval.type = 'url';
 					retval.url = {};
-					retval.url.protocol = urlMatch[ 1 ];
-					retval.url.url = urlMatch[ 2 ];
+					retval.url.url = href;
 				}
 			}
 
@@ -573,10 +565,9 @@
 			// Compose the URL.
 			switch ( data.type ) {
 				case 'url':
-					var protocol = ( data.url && data.url.protocol !== undefined ) ? data.url.protocol : 'http://',
-						url = ( data.url && CKEDITOR.tools.trim( data.url.url ) ) || '';
+					var url = ( data.url && CKEDITOR.tools.trim( data.url.url ) ) || '';
 
-					set[ 'data-cke-saved-href' ] = ( url.indexOf( '/' ) === 0 ) ? url : protocol + url;
+					set[ 'data-cke-saved-href' ] = url;
 
 					break;
 				case 'anchor':

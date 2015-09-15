@@ -138,95 +138,36 @@
 					type: 'vbox',
 					id: 'urlOptions',
 					children: [ {
-						type: 'hbox',
-						widths: [ '25%', '75%' ],
-						children: [ {
-							id: 'protocol',
-							type: 'select',
-							label: commonLang.protocol,
-							'default': 'http://',
-							items: [
-								// Force 'ltr' for protocol names in BIDI. (#5433)
-								[ 'http://\u200E', 'http://' ],
-								[ 'https://\u200E', 'https://' ],
-								[ 'ftp://\u200E', 'ftp://' ],
-								[ linkLang.other, '' ]
-							],
-							setup: function( data ) {
-								if ( data.url )
-									this.setValue( data.url.protocol || '' );
-							},
-							commit: function( data ) {
-								if ( !data.url )
-									data.url = {};
+						type: 'text',
+						id: 'url',
+						label: commonLang.url,
+						validate: function() {
+							var dialog = this.getDialog();
 
-								data.url.protocol = this.getValue();
-							}
-						},
-						{
-							type: 'text',
-							id: 'url',
-							label: commonLang.url,
-							onLoad: function() {
-								this.allowOnChange = true;
-							},
-							onKeyUp: function() {
-								this.allowOnChange = false;
-								var protocolCmb = this.getDialog().getContentElement( 'info', 'protocol' ),
-									url = this.getValue(),
-									urlOnChangeProtocol = /^(http|https|ftp):\/\/(?=.)/i,
-									urlOnChangeTestOther = /^((javascript:)|[#\/\.\?])/i;
-
-								var protocol = urlOnChangeProtocol.exec( url );
-								if ( protocol ) {
-									this.setValue( url.substr( protocol[ 0 ].length ) );
-									protocolCmb.setValue( protocol[ 0 ].toLowerCase() );
-								} else if ( urlOnChangeTestOther.test( url ) ) {
-									protocolCmb.setValue( '' );
-								}
-
-								this.allowOnChange = true;
-							},
-							onChange: function() {
-								if ( this.allowOnChange ) // Dont't call on dialog load.
-								this.onKeyUp();
-							},
-							validate: function() {
-								var dialog = this.getDialog();
-
-								if ( dialog.getContentElement( 'info', 'linkType' ) && dialog.getValueOf( 'info', 'linkType' ) != 'url' )
-									return true;
-
-								if ( !editor.config.linkJavaScriptLinksAllowed && ( /javascript\:/ ).test( this.getValue() ) ) {
-									alert( commonLang.invalidValue ); // jshint ignore:line
-									return false;
-								}
-
-								if ( this.getDialog().fakeObj ) // Edit Anchor.
+							if ( dialog.getContentElement( 'info', 'linkType' ) && dialog.getValueOf( 'info', 'linkType' ) != 'url' )
 								return true;
-							},
-							setup: function( data ) {
-								this.allowOnChange = false;
-								if ( data.url )
-									this.setValue( data.url.url );
-								this.allowOnChange = true;
 
-							},
-							commit: function( data ) {
-								// IE will not trigger the onChange event if the mouse has been used
-								// to carry all the operations #4724
-								this.onChange();
-
-								if ( !data.url )
-									data.url = {};
-
-								data.url.url = this.getValue();
-								this.allowOnChange = false;
+							if ( !editor.config.linkJavaScriptLinksAllowed && ( /javascript\:/ ).test( this.getValue() ) ) {
+								alert( commonLang.invalidValue ); // jshint ignore:line
+								return false;
 							}
-						} ],
-						setup: function() {
-							if ( !this.getDialog().getContentElement( 'info', 'linkType' ) )
-								this.getElement().show();
+
+							if ( this.getDialog().fakeObj ) // Edit Anchor.
+							return true;
+						},
+						setup: function( data ) {
+							this.allowOnChange = false;
+							if ( data.url )
+								this.setValue( data.url.url );
+							this.allowOnChange = true;
+
+						},
+						commit: function( data ) {
+							if ( !data.url )
+								data.url = {};
+
+							data.url.url = this.getValue();
+							this.allowOnChange = false;
 						}
 					},
 					{
