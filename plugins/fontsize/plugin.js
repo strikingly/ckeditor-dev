@@ -42,18 +42,35 @@ CKEDITOR.plugins.add( 'fontsize', {
 			selection.selectBookmarks( bookmarks );
 		}
 
-		var smaller = new sizeCommand( editor, 'fontsizesmaller', 60 );
-		var small = new sizeCommand( editor, 'fontsizesmall', 80 );
-		var normal = new sizeCommand( editor, 'fontsizenormal', 100 );
-		var large = new sizeCommand( editor, 'fontsizelarge', 130 );
-		var larger = new sizeCommand( editor, 'fontsizelarger', 160 );
+		var cmdDefs = [{
+			label: 'Smaller',
+			name: 'fontsizeSmaller',
+			size: 60
+		}, {
+			label: 'Small',
+			name: 'fontsizeSmall',
+			size: 80
+		}, {
+			label: 'Normal',
+			name: 'fontsizeNormal',
+			size: 100
+		}, {
+			label: 'Large',
+			name: 'fontsizeLarge',
+			size: 130
+		}, {
+			label: 'Larger',
+			name: 'fontsizeLarger',
+			size: 160
+		}];
 
-		editor.addCommand( 'fontsizesmaller', smaller );
-		editor.addCommand( 'fontsizesmall', small );
-		editor.addCommand( 'fontsizenormal', normal );
-		editor.addCommand( 'fontsizelarge', large );
-		editor.addCommand( 'fontsizelarger', larger );
+		for ( var i = 0; i < cmdDefs.length; i++ ) {
+			var cmdDef = cmdDefs[ i ];
+			var cmd = new sizeCommand( editor, cmdDef.name.toLowerCase(), cmdDef.size );
+			editor.addCommand( cmdDef.name.toLowerCase(), cmd );
+		}
 
+		var minFontSize = editor.config.minFontSize;
 		editor.ui.add( 'FontSize', CKEDITOR.UI_MENUBUTTON, {
 			label: 'Change Font Size',
 			onMenu: function () {
@@ -69,44 +86,32 @@ CKEDITOR.plugins.add( 'fontsize', {
 					size = getSize(block);
 				}
 
-				return {
-					fontsizeSmaller: size === 60 ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF,
-					fontsizeSmall: size === 80 ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF,
-					fontsizeNormal: size === 100 ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF,
-					fontsizeLarge: size === 130 ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF,
-					fontsizeLarger: size === 160 ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF
-				};
+				var bodySize = parseInt( editor.element.getComputedStyle( 'font-size' ), 10 );
+				var minPerc = minFontSize / bodySize * 100;
+
+				var items = {};
+				for ( var i = 0; i < cmdDefs.length; i++ ) {
+					var cmdDef = cmdDefs[ i ];
+					if ( !minFontSize || cmdDef.size >= minPerc ) {
+						items[ cmdDef.name ] = size === cmdDef.size ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF;
+					}
+				}
+
+				return items;
 			}
 		});
 
 		var menuGroup = 'fontsizeButton';
 		editor.addMenuGroup( menuGroup );
-		editor.addMenuItems({
-			fontsizeSmaller: {
-				label: 'Smaller',
+		var items = {};
+		for ( var i = 0; i < cmdDefs.length; i++ ) {
+			var cmdDef = cmdDefs[ i ];
+			items[ cmdDef.name ] = {
+				label: cmdDef.label,
 				group: menuGroup,
-				command: 'fontsizesmaller'
-			},
-			fontsizeSmall: {
-				label: 'Small',
-				group: menuGroup,
-				command: 'fontsizesmall'
-			},
-			fontsizeNormal: {
-				label: 'Normal',
-				group: menuGroup,
-				command: 'fontsizenormal'
-			},
-			fontsizeLarge: {
-				label: 'Large',
-				group: menuGroup,
-				command: 'fontsizelarge'
-			},
-			fontsizeLarger: {
-				label: 'Larger',
-				group: menuGroup,
-				command: 'fontsizelarger'
-			}
-		});
+				command: cmdDef.name.toLowerCase()
+			};
+		}
+		editor.addMenuItems(items);
 	}
 });
