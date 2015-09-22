@@ -59,7 +59,13 @@
 			// Add the link and unlink buttons.
 			editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'link', {
 				allowedContent: allowed,
-				requiredContent: required
+				requiredContent: required,
+				contextSensitive: true,
+				refresh: function( editor, path ) {
+					var state = path.contains( 'a' ) ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF;
+					this.setState( state );
+					return true;
+				}
 			} ) );
 			editor.addCommand( 'anchor', new CKEDITOR.dialogCommand( 'anchor', {
 				allowedContent: 'a[!name,id]',
