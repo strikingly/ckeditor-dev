@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
@@ -334,6 +334,7 @@ CKEDITOR.config = {
 	 * @cfg
 	 */
 	baseFloatZIndex: 10000,
+	dialogZIndex: 10010,
 
 	/**
 	 * The keystrokes that are blocked by default as the browser implementation

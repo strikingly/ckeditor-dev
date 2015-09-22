@@ -867,7 +867,7 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 
 			// Set z-index.
 			if ( CKEDITOR.dialog._.currentZIndex === null )
-				CKEDITOR.dialog._.currentZIndex = this._.editor.config.baseFloatZIndex;
+				CKEDITOR.dialog._.currentZIndex = this._.editor.config.dialogZIndex;
 			this._.element.getFirst().setStyle( 'z-index', CKEDITOR.dialog._.currentZIndex += 10 );
 
 			// Maintain the dialog ordering and dialog cover.
@@ -879,7 +879,7 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 			} else {
 				this._.parentDialog = CKEDITOR.dialog._.currentTop;
 				var parentElement = this._.parentDialog.getElement().getFirst();
-				parentElement.$.style.zIndex -= Math.floor( this._.editor.config.baseFloatZIndex / 2 );
+				parentElement.$.style.zIndex -= Math.floor( this._.editor.config.dialogZIndex / 2 );
 				CKEDITOR.dialog._.currentTop = this;
 			}
 
@@ -1075,7 +1075,7 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 				hideCover( this._.editor );
 			else {
 				var parentElement = this._.parentDialog.getElement().getFirst();
-				parentElement.setStyle( 'z-index', parseInt( parentElement.$.style.zIndex, 10 ) + Math.floor( this._.editor.config.baseFloatZIndex / 2 ) );
+				parentElement.setStyle( 'z-index', parseInt( parentElement.$.style.zIndex, 10 ) + Math.floor( this._.editor.config.dialogZIndex / 2 ) );
 			}
 			CKEDITOR.dialog._.currentTop = this._.parentDialog;
 
@@ -2110,14 +2110,14 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 		var config = editor.config,
 			backgroundColorStyle = config.dialog_backgroundCoverColor || 'white',
 			backgroundCoverOpacity = config.dialog_backgroundCoverOpacity,
-			baseFloatZIndex = config.baseFloatZIndex,
-			coverKey = CKEDITOR.tools.genKey( backgroundColorStyle, backgroundCoverOpacity, baseFloatZIndex ),
+			dialogZIndex = config.dialogZIndex,
+			coverKey = CKEDITOR.tools.genKey( backgroundColorStyle, backgroundCoverOpacity, dialogZIndex ),
 			coverElement = covers[ coverKey ];
 
 		if ( !coverElement ) {
 			var html = [
 				'<div tabIndex="-1" style="position: ', ( CKEDITOR.env.ie6Compat ? 'absolute' : 'fixed' ),
-				'; z-index: ', baseFloatZIndex,
+				'; z-index: ', dialogZIndex,
 				'; top: 0px; left: 0px; ',
 				( !CKEDITOR.env.ie6Compat ? 'background-color: ' + backgroundColorStyle : '' ),
 				'" class="cke_dialog_background_cover">'
