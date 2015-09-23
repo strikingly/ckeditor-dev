@@ -33,7 +33,7 @@ CKEDITOR.plugins.setLang( 'link', 'en', {
 	noAnchors: '(No anchors available in the document)',
 	noEmail: 'Please type the e-mail address',
 	invalidEmail: 'Invalid e-mail address',
-	uploadDoc: 'Upload document',
+	uploadDocument: 'Upload document',
 	openInNewWindow: 'Open in new window',
 	noUrl: 'Please type the link URL',
 	other: '<other>',
