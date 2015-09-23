@@ -43,23 +43,23 @@ CKEDITOR.plugins.add( 'fontsize', {
 		}
 
 		var cmdDefs = [{
-			label: 'Smaller',
+			label: editor.lang.fontsize.smaller,
 			name: 'fontsizeSmaller',
 			size: 60
 		}, {
-			label: 'Small',
+			label: editor.lang.fontsize.small,
 			name: 'fontsizeSmall',
 			size: 80
 		}, {
-			label: 'Normal',
+			label: editor.lang.fontsize.normal,
 			name: 'fontsizeNormal',
 			size: 100
 		}, {
-			label: 'Large',
+			label: editor.lang.fontsize.large,
 			name: 'fontsizeLarge',
 			size: 130
 		}, {
-			label: 'Larger',
+			label: editor.lang.fontsize.larger,
 			name: 'fontsizeLarger',
 			size: 160
 		}];
@@ -72,7 +72,7 @@ CKEDITOR.plugins.add( 'fontsize', {
 
 		var minFontSize = editor.config.minFontSize;
 		editor.ui.add( 'FontSize', CKEDITOR.UI_MENUBUTTON, {
-			label: 'Change Font Size',
+			label: editor.lang.fontsize.label,
 			onMenu: function () {
 				var size;
 				var selection = editor.getSelection();
