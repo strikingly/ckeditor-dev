@@ -132,11 +132,7 @@ Special outer level classes used in this file:
 
 .cke_menubutton:hover,
 .cke_menubutton:focus,
-.cke_menubutton:active
-{
-	background-color: #555;
-}
-
+.cke_menubutton:active,
 .cke_menubutton.cke_menubutton_on:hover,
 .cke_menubutton.cke_menubutton_on:focus,
 .cke_menubutton.cke_menubutton_on:active
