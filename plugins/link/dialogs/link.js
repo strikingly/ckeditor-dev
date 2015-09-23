@@ -110,7 +110,7 @@
 		return {
 			title: linkLang.title,
 			minWidth: 350,
-			minHeight: 230,
+			minHeight: 150,
 			resizable: CKEDITOR.DIALOG_RESIZE_NONE,
 			buttons: [ CKEDITOR.dialog.okButton ],
 			contents: [ {
@@ -176,7 +176,7 @@
 						children: [ {
 							type: 'checkbox',
 							id: 'linkTargetType',
-							label: 'Open in new window',
+							label: linkLang.openInNewWindow,
 							setup: function( data ) {
 								if ( data.target ) {
 									var val = data.target.type === 'notSet' ? false : true;
@@ -194,7 +194,7 @@
 						}, {
 							type: 'button',
 							id: 'upload',
-							label: 'Upload document',
+							label: linkLang.uploadDocument,
 							style: 'float: right',
 							onClick: function() {
 								var dialog = this.getDialog();
@@ -209,20 +209,19 @@
 				{
 					type: 'vbox',
 					id: 'emailOptions',
-					padding: 1,
 					children: [ {
 						type: 'text',
 						id: 'emailAddress',
 						label: linkLang.emailAddress,
 						validate: function() {
 							var dialog = this.getDialog();
-							var emailRegex = /.+@.+/;
+							var emailRegex = /.+@.+\..+/;
 
 							if ( !dialog.getContentElement( 'info', 'linkType' ) || dialog.getValueOf( 'info', 'linkType' ) != 'email' )
 								return true;
 
 							if (!emailRegex.test( this.getValue() )) {
-								alert('Invalid email address');
+								alert( linkLang.invalidEmail );
 								return false;
 							}
 						},
@@ -240,39 +239,7 @@
 
 							data.email.address = this.getValue();
 						}
-					},
-					{
-						type: 'text',
-						id: 'emailSubject',
-						label: linkLang.emailSubject,
-						setup: function( data ) {
-							if ( data.email )
-								this.setValue( data.email.subject );
-						},
-						commit: function( data ) {
-							if ( !data.email )
-								data.email = {};
-
-							data.email.subject = this.getValue();
-						}
-					},
-					{
-						type: 'textarea',
-						id: 'emailBody',
-						label: linkLang.emailBody,
-						rows: 3,
-						'default': '',
-						setup: function( data ) {
-							if ( data.email )
-								this.setValue( data.email.body );
-						},
-						commit: function( data ) {
-							if ( !data.email )
-								data.email = {};
-
-							data.email.body = this.getValue();
-						}
-					} ],
+					}],
 					setup: function() {
 						if ( !this.getDialog().getContentElement( 'info', 'linkType' ) )
 							this.getElement().hide();

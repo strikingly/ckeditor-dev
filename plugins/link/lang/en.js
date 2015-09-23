@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or http://ckeditor.com/license
 */
@@ -32,6 +32,9 @@ CKEDITOR.plugins.setLang( 'link', 'en', {
 	name: 'Name',
 	noAnchors: '(No anchors available in the document)',
 	noEmail: 'Please type the e-mail address',
+	invalidEmail: 'Invalid e-mail address',
+	uploadDoc: 'Upload document',
+	openInNewWindow: 'Open in new window',
 	noUrl: 'Please type the link URL',
 	other: '<other>',
 	popupDependent: 'Dependent (Netscape)',
