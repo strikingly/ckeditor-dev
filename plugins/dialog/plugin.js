@@ -354,6 +354,13 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 			} );
 		}
 
+		if ( definition.onRemove ) {
+			this.on( 'remove', function( evt ) {
+				if ( definition.onRemove.call( this, evt ) === false )
+					evt.data.hide = false;
+			} );
+		}
+
 		var me = this;
 
 		// Iterates over all items inside all content in the dialog, calling a
@@ -1648,6 +1655,30 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 						onClick: function( evt ) {
 							var dialog = evt.data.dialog;
 							if ( dialog.fire( 'cancel', { hide: true } ).hide !== false )
+								dialog.hide();
+						}
+					}, override, true );
+				};
+			retval.type = 'button';
+			retval.override = function( override ) {
+				return CKEDITOR.tools.extend( function( editor ) {
+					return retval( editor, override );
+				}, { type: 'button' }, true );
+			};
+			return retval;
+		} )(),
+
+		removeButton: ( function() {
+			var retval = function( editor, override ) {
+					override = override || {};
+					return CKEDITOR.tools.extend( {
+						id: 'remove',
+						type: 'button',
+						label: 'Remove Link',
+						'class': 'cke_dialog_ui_button_remove',
+						onClick: function( evt ) {
+							var dialog = evt.data.dialog;
+							if ( dialog.fire( 'remove', { hide: true } ).hide !== false )
 								dialog.hide();
 						}
 					}, override, true );

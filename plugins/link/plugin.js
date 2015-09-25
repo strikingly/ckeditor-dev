@@ -483,9 +483,15 @@
 				}
 				// urlRegex matches empty strings, so need to check for href as well.
 				else if ( href ) {
-					retval.type = 'url';
-					retval.url = {};
-					retval.url.url = href;
+					if ( /^https?:\/\/[^.]+\.strikinglycdn\.com/.test( href ) ) {
+						retval.type = 'document';
+						retval.document = {};
+						retval.document.url = href;
+					} else {
+						retval.type = 'url';
+						retval.url = {};
+						retval.url.url = href;
+					}
 				}
 			}
 
@@ -581,6 +587,12 @@
 						id = ( data.anchor && data.anchor.id );
 
 					set[ 'data-cke-saved-href' ] = '#' + ( name || id || '' );
+
+					break;
+				case 'document':
+					var url = ( data.document && CKEDITOR.tools.trim( data.document.url ) ) || '';
+
+					set[ 'data-cke-saved-href' ] = url;
 
 					break;
 				case 'email':

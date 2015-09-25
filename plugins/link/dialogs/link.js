@@ -44,7 +44,7 @@
 		// Handles the event when the "Type" selection box is changed.
 		var linkTypeChanged = function() {
 				var dialog = this.getDialog(),
-					partIds = [ 'urlOptions', 'anchorOptions', 'emailOptions' ],
+					partIds = [ 'urlOptions', 'emailOptions', 'documentOptions' ],
 					typeValue = this.getValue(),
 					uploadTab = dialog.definition.getContents( 'upload' ),
 					uploadInitiallyHidden = uploadTab && uploadTab.hidden;
@@ -110,21 +110,22 @@
 		return {
 			title: linkLang.title,
 			minWidth: 350,
-			minHeight: 150,
+			minHeight: 110,
 			resizable: CKEDITOR.DIALOG_RESIZE_NONE,
-			buttons: [ CKEDITOR.dialog.okButton ],
+			buttons: [ CKEDITOR.dialog.removeButton, CKEDITOR.dialog.okButton ],
 			contents: [ {
 				id: 'info',
 				label: linkLang.info,
 				title: linkLang.info,
 				elements: [ {
 					id: 'linkType',
-					type: 'select',
-					label: linkLang.type,
+					type: 'radio',
 					'default': 'url',
+					className: 'cke_dialog_link_type',
 					items: [
 						[ linkLang.toUrl, 'url' ],
-						[ linkLang.toEmail, 'email' ]
+						[ linkLang.toEmail, 'email' ],
+						[ 'Document', 'document' ],
 					],
 					onChange: linkTypeChanged,
 					setup: function( data ) {
@@ -137,10 +138,17 @@
 				{
 					type: 'vbox',
 					id: 'urlOptions',
+					className: 'cke_dialog_web',
 					children: [ {
 						type: 'text',
 						id: 'url',
 						label: commonLang.url,
+						labelLayout: 'horizontal',
+						className: 'cke_dialog_url',
+						widths: [ '70px' ],
+						onLoad: function() {
+							this.getInputElement().setAttribute('placeholder', '#2 or http://example.com');
+						},
 						validate: function() {
 							var dialog = this.getDialog();
 
@@ -159,8 +167,21 @@
 							this.allowOnChange = false;
 							if ( data.url )
 								this.setValue( data.url.url );
+							else
+								this.setValue( '' );
 							this.allowOnChange = true;
-
+						},
+						onKeyUp: function() {
+							this.onChange();
+						},
+						onChange: function() {
+							var url = this.getValue();
+							var showTarget = true;
+							if ( !url || /^#/.test(url) )
+								showTarget = false;
+							var dialog = this.getDialog();
+							var target = dialog.getContentElement( 'info', 'linkTargetType' );
+							target.getElement()[ showTarget ? 'show' : 'hide' ]();
 						},
 						commit: function( data ) {
 							if ( !data.url )
@@ -171,79 +192,137 @@
 						}
 					},
 					{
-						type: 'hbox',
-						widths: [ '50%', '50%' ],
-						children: [ {
-							type: 'checkbox',
-							id: 'linkTargetType',
-							label: linkLang.openInNewWindow,
-							setup: function( data ) {
-								if ( data.target ) {
-									var val = data.target.type === 'notSet' ? false : true;
-									this.setValue( val );
-								}
-							},
-							commit: function( data ) {
-								if ( !data.target )
-									data.target = {};
+						type: 'checkbox',
+						id: 'linkTargetType',
+						label: linkLang.openInNewWindow,
+						className: 'cke_dialog_new_window',
+						setup: function( data ) {
+							if ( data.target ) {
+								var val = data.target.type === 'notSet' ? false : true;
+								this.setValue( val );
+							}
+						},
+						commit: function( data ) {
+							if ( !data.target )
+								data.target = {};
 
-								var type = this.getValue() ? '_blank' : 'notSet';
-								data.target.type = type;
-								data.target.name = type;
-							}
-						}, {
-							type: 'button',
-							id: 'upload',
-							label: linkLang.uploadDocument,
-							style: 'float: right',
-							onClick: function() {
-								var dialog = this.getDialog();
-								editor.config.uploadCallback(function(url) {
-									var urlInput = dialog.getContentElement( 'info', 'url' );
-									urlInput.setValue( url || '' );
-								});
-							}
-						} ]
+							var type = this.getValue() ? '_blank' : 'notSet';
+							data.target.type = type;
+							data.target.name = type;
+						}
 					} ]
 				},
 				{
-					type: 'vbox',
+					type: 'text',
 					id: 'emailOptions',
+					label: 'Address',
+					labelLayout: 'horizontal',
+					widths: [ '70px' ],
+					className: 'cke_dialog_email',
+					onLoad: function() {
+						this.getInputElement().setAttribute('placeholder', 'john@example.com');
+					},
+					validate: function() {
+						var dialog = this.getDialog();
+						var emailRegex = /.+@.+\..+/;
+
+						if ( !dialog.getContentElement( 'info', 'linkType' ) || dialog.getValueOf( 'info', 'linkType' ) != 'email' )
+							return true;
+
+						if (!emailRegex.test( this.getValue() )) {
+							alert( linkLang.invalidEmail );
+							return false;
+						}
+					},
+					setup: function( data ) {
+						var linkType = this.getDialog().getContentElement( 'info', 'linkType' );
+
+						if ( !linkType )
+							this.getElement().hide();
+
+						if ( data.email )
+							this.setValue( data.email.address );
+
+						if ( linkType && linkType.getValue() == 'email' )
+							this.select();
+					},
+					commit: function( data ) {
+						if ( !data.email )
+							data.email = {};
+
+						data.email.address = this.getValue();
+					}
+				},
+				{
+					type: 'vbox',
+					id: 'documentOptions',
 					children: [ {
-						type: 'text',
-						id: 'emailAddress',
-						label: linkLang.emailAddress,
-						validate: function() {
-							var dialog = this.getDialog();
-							var emailRegex = /.+@.+\..+/;
-
-							if ( !dialog.getContentElement( 'info', 'linkType' ) || dialog.getValueOf( 'info', 'linkType' ) != 'email' )
-								return true;
-
-							if (!emailRegex.test( this.getValue() )) {
-								alert( linkLang.invalidEmail );
-								return false;
+						type: 'hbox',
+						widths: '10px',
+						children: [ {
+							type: 'button',
+							id: 'upload',
+							label: 'Upload file',
+							className: 'cke_dialog_upload',
+							onLoad: function() {
+								var span = this.getElement().getChild([0]);
+								var html = span.getHtml();
+								html = '<i class="entypo-upload"></i> ' + html;
+								span.setHtml( html );
+							},
+							onClick: function() {
+								var dialog = this.getDialog();
+								editor.config.uploadCallback(function(url) {
+									var uploadUrl = dialog.getContentElement( 'info', 'uploadUrl' );
+									uploadUrl.setValue( url || '' );
+								});
+							}
+						}, {
+							type: 'text',
+							id: 'uploadUrl',
+							className: 'cke_dialog_upload_url',
+							onLoad: function() {
+								this.getInputElement().setAttribute('readonly', 'readonly');
+							},
+							setup: function ( data ) {
+								if ( data.document )
+									this.setValue( data.document.url );
+								else
+									this.setValue( '' );
+							},
+							onChange: function() {
+								var url = this.getValue( url );
+								var dialog = this.getDialog();
+								var uploadTarge = dialog.getContentElement( 'info', 'uploadLinkTargetType' );
+								this.getElement()[ url ? 'show' : 'hide' ]();
+								uploadTarge.getElement()[ url ? 'show' : 'hide' ]();
+							},
+							commit: function ( data ) {
+								if ( !data.document )
+									data.document = {};
+								data.document.url = this.getValue();
+							}
+						} ]
+					}, {
+						type: 'checkbox',
+						id: 'uploadLinkTargetType',
+						label: linkLang.openInNewWindow,
+						className: 'cke_dialog_new_window',
+						setup: function( data ) {
+							if ( data.target ) {
+								var val = data.target.type === 'notSet' ? false : true;
+								this.setValue( val );
 							}
 						},
-						setup: function( data ) {
-							if ( data.email )
-								this.setValue( data.email.address );
-
-							var linkType = this.getDialog().getContentElement( 'info', 'linkType' );
-							if ( linkType && linkType.getValue() == 'email' )
-								this.select();
-						},
 						commit: function( data ) {
-							if ( !data.email )
-								data.email = {};
+							if ( !data.target )
+								data.target = {};
 
-							data.email.address = this.getValue();
+							var type = this.getValue() ? '_blank' : 'notSet';
+							data.target.type = type;
+							data.target.name = type;
 						}
-					}],
-					setup: function() {
-						if ( !this.getDialog().getContentElement( 'info', 'linkType' ) )
-							this.getElement().hide();
-					}
+					} ]
 				} ]
 			}],
 			onShow: function() {
@@ -263,6 +342,9 @@
 
 				var data = plugin.parseLinkAttributes( editor, element );
 
+				var hideRemove = !data.type || data.type === 'email' && !data.email.address || data.type === 'url' && !data.url.url || data.type === 'document' && !data.document.url;
+				this.getButton('remove').getElement()[ hideRemove ? 'hide' : 'show' ]();
+
 				// Record down the selected element in the dialog.
 				this._.selectedElement = element;
 
@@ -277,7 +359,7 @@
 				var selection = editor.getSelection(),
 					attributes = plugin.getLinkAttributes( editor, data );
 
-				if (data.type === 'email' && !data.email.address || data.type === 'url' && !data.url.url) {
+				if (data.type === 'email' && !data.email.address || data.type === 'url' && !data.url.url || data.type === 'document' && !data.document.url) {
 					editor.execCommand('unlink');
 					return;
 				}
@@ -324,6 +406,9 @@
 
 					delete this._.selectedElement;
 				}
+			},
+			onRemove: function() {
+				editor.execCommand('unlink');
 			},
 			// Inital focus on 'url' field if link is of type URL.
 			onFocus: function() {

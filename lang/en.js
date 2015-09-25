@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
@@ -55,7 +55,7 @@ CKEDITOR.lang[ 'en' ] = {
 		cssClass: 'Stylesheet Classes',
 		advisoryTitle: 'Advisory Title',
 		cssStyle: 'Style',
-		ok: 'OK',
+		ok: 'Save',
 		cancel: 'Cancel',
 		close: 'Close',
 		preview: 'Preview',
