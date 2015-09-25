@@ -123,7 +123,7 @@
 					'default': 'url',
 					className: 'cke_dialog_link_type',
 					items: [
-						[ linkLang.toUrl, 'url' ],
+						[ 'Web', 'url' ],
 						[ linkLang.toEmail, 'email' ],
 						[ 'Document', 'document' ],
 					],
@@ -142,7 +142,7 @@
 					children: [ {
 						type: 'text',
 						id: 'url',
-						label: 'Web',
+						label: 'URL',
 						labelLayout: 'horizontal',
 						className: 'cke_dialog_url',
 						widths: [ '70px' ],
