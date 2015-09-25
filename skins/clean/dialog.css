@@ -320,6 +320,7 @@ a.cke_dialog_close_button
 	top: 10px;
 	z-index: 5;
 	opacity: 0.8;
+	outline: 0;
 	filter: alpha(opacity = 80);
 }
 
@@ -569,52 +570,29 @@ a.cke_dialog_ui_button
 	margin: 0;
 	font-size: 14px;
 
-	font-family: 'pragmatica', sans-serif;
+	font-family: 'brandontext', 'open sans', sans-serif;
 	text-transform: uppercase;
 	text-align: center;
 	vertical-align: middle;
 	cursor: pointer;
 
 	border: 1px solid #ccc;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	border-radius: 3px;
 	box-shadow: inset 0 1px #fff;
-
-	background-color: #999;
-	background-repeat: repeat-x;
-	background-image: -khtml-gradient(linear, left top, left bottom, from(#bbb), to(#999));
-	background-image: -moz-linear-gradient(top, #bbb, #999);
-	background-image: -ms-linear-gradient(top, #bbb, #999);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #bbb), color-stop(100%, #999));
-	background-image: -webkit-linear-gradient(top, #bbb, #999);
-	background-image: -o-linear-gradient(top, #bbb, #999);
-	background-image: linear-gradient(top, #bbb, #999);
-	filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#bbbbbb', endColorstr='#999999', GradientType=0);
-	color: #fff;
-	box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 1px 1px rgba(0, 0, 0, 0.15);
-	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+	background: #f6f6f6;
+	color: #919394;
 }
 
 a.cke_dialog_ui_button:hover,
 a.cke_dialog_ui_button:active
 {
-	background-color: #aaa;
-	background-image: -khtml-gradient(linear, left top, left bottom, from(#ccc), to(#aaa));
-	background-image: -moz-linear-gradient(top, #ccc, #aaa);
-	background-image: -ms-linear-gradient(top, #ccc, #aaa);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ccc), color-stop(100%, #aaa));
-	background-image: -webkit-linear-gradient(top, #ccc, #aaa);
-	background-image: -o-linear-gradient(top, #ccc, #aaa);
-	background-image: linear-gradient(top, #ccc, #aaa);
-	filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#cccccc', endColorstr='#aaaaaa', GradientType=0);
-}
-
-a.cke_dialog_ui_button:active {
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 5px 15px rgba(0, 0, 0, 0.2);
+	background-color: #eee;
 }
 
 span.cke_dialog_ui_button
 {
+	cursor: pointer;
+	font-weight: bold;
 	padding: 0 10px;
 	color: inherit;
 }
@@ -655,29 +633,17 @@ a.cke_dialog_ui_button[style*="width"]
 /* Special class appended to the Ok button. */
 a.cke_dialog_ui_button_ok
 {
-	background-color: #70a800;
-    background-image: -khtml-gradient(linear, left top, left bottom, from(#93b800), to(#70a800));
-    background-image: -moz-linear-gradient(top, #93b800, #70a800);
-    background-image: -ms-linear-gradient(top, #93b800, #70a800);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #93b800), color-stop(100%, #70a800));
-    background-image: -webkit-linear-gradient(top, #93b800, #70a800);
-    background-image: -o-linear-gradient(top, #93b800, #70a800);
-    background-image: linear-gradient(top, #93b800, #70a800);
-    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#93b800', endColorstr='#70a800', GradientType=0);
+	color: #fff;
+	background: #96bd13;
+	border-color: #96bd13;
+	box-shadow: inset 0 1px rgba(255, 255, 255, 0.4);
 }
 
 a.cke_dialog_ui_button_ok:hover,
 a.cke_dialog_ui_button_ok:active
 {
-	background-color: #86c900;
-	background-image: -khtml-gradient(linear, left top, left bottom, from(#afdb00), to(#86c900));
-	background-image: -moz-linear-gradient(top, #afdb00, #86c900);
-	background-image: -ms-linear-gradient(top, #afdb00, #86c900);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #afdb00), color-stop(100%, #86c900));
-	background-image: -webkit-linear-gradient(top, #afdb00, #86c900);
-	background-image: -o-linear-gradient(top, #afdb00, #86c900);
-	background-image: linear-gradient(top, #afdb00, #86c900);
-	filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#afdb00', endColorstr='#86c900', GradientType=0);
+	background: #a8d415;
+	border-color: #a8d415;
 }
 
 a.cke_dialog_ui_button_ok.cke_disabled {
@@ -694,11 +660,6 @@ a.cke_dialog_ui_button_ok.cke_disabled {
 
 a.cke_dialog_ui_button_ok.cke_disabled span {
 	color: #E0E8D1;
-}
-
-span.cke_dialog_ui_button
-{
-	cursor: pointer;
 }
 
 /* 	:focus/:active styles for dialog footer buttons (ok & cancel) */

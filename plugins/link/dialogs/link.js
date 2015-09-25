@@ -147,7 +147,7 @@
 						className: 'cke_dialog_url',
 						widths: [ '70px' ],
 						onLoad: function() {
-							this.getInputElement().setAttribute('placeholder', '#2 or http://example.com');
+							this.getInputElement().setAttribute('placeholder', '#2 (section number) or http://example.com');
 						},
 						validate: function() {
 							var dialog = this.getDialog();
