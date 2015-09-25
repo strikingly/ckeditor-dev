@@ -219,22 +219,6 @@
 		popupRegex = /\s*window.open\(\s*this\.href\s*,\s*(?:'([^']*)'|null)\s*,\s*'([^']*)'\s*\)\s*;\s*return\s*false;*\s*/,
 		popupFeaturesRegex = /(?:^|,)([^=]+)=(\d+|yes|no)/gi;
 
-	var advAttrNames = {
-		id: 'advId',
-		dir: 'advLangDir',
-		accessKey: 'advAccessKey',
-		// 'data-cke-saved-name': 'advName',
-		name: 'advName',
-		lang: 'advLangCode',
-		tabindex: 'advTabIndex',
-		title: 'advTitle',
-		type: 'advContentType',
-		'class': 'advCSSClasses',
-		charset: 'advCharset',
-		style: 'advStyles',
-		rel: 'advRel'
-	};
-
 	function unescapeSingleQuote( str ) {
 		return str.replace( /\\'/g, '\'' );
 	}
@@ -470,6 +454,13 @@
 				}
 			}
 
+			// Load target and popup settings.
+			var newWindow = false;
+			if ( element ) {
+				var target = element.getAttribute( 'target' );
+				newWindow = target === '_blank';
+			}
+
 			if ( !retval.type ) {
 				if ( ( emailMatch = href.match( emailRegex ) ) ) {
 					var subjectMatch = href.match( emailSubjectRegex ),
@@ -487,61 +478,14 @@
 						retval.type = 'document';
 						retval.document = {};
 						retval.document.url = href;
+						retval.document.openInNewWindow = newWindow;
 					} else {
 						retval.type = 'url';
-						retval.url = {};
-						retval.url.url = href;
+						retval.web = {};
+						retval.web.url = href;
+						retval.web.openInNewWindow = newWindow;
 					}
 				}
-			}
-
-			// Load target and popup settings.
-			if ( element ) {
-				var target = element.getAttribute( 'target' );
-
-				// IE BUG: target attribute is an empty string instead of null in IE if it's not set.
-				if ( !target ) {
-					var onclick = element.data( 'cke-pa-onclick' ) || element.getAttribute( 'onclick' ),
-						onclickMatch = onclick && onclick.match( popupRegex );
-
-					if ( onclickMatch ) {
-						retval.target = {
-							type: 'popup',
-							name: onclickMatch[ 1 ]
-						};
-
-						var featureMatch;
-						while ( ( featureMatch = popupFeaturesRegex.exec( onclickMatch[ 2 ] ) ) ) {
-							// Some values should remain numbers (#7300)
-							if ( ( featureMatch[ 2 ] == 'yes' || featureMatch[ 2 ] == '1' ) && !( featureMatch[ 1 ] in { height: 1, width: 1, top: 1, left: 1 } ) )
-								retval.target[ featureMatch[ 1 ] ] = true;
-							else if ( isFinite( featureMatch[ 2 ] ) )
-								retval.target[ featureMatch[ 1 ] ] = featureMatch[ 2 ];
-						}
-					}
-				} else {
-					retval.target = {
-						type: target.match( selectableTargets ) ? target : 'frame',
-						name: target
-					};
-				}
-
-				var advanced = {};
-
-				for ( var a in advAttrNames ) {
-					var val = element.getAttribute( a );
-
-					if ( val )
-						advanced[ advAttrNames[ a ] ] = val;
-				}
-
-				var advName = element.data( 'cke-saved-name' ) || advanced.advName;
-
-				if ( advName )
-					advanced.advName = advName;
-
-				if ( !CKEDITOR.tools.isEmpty( advanced ) )
-					retval.advanced = advanced;
 			}
 
 			return retval;
@@ -577,7 +521,7 @@
 			// Compose the URL.
 			switch ( data.type ) {
 				case 'url':
-					var url = ( data.url && CKEDITOR.tools.trim( data.url.url ) ) || '';
+					var url = ( data.web && CKEDITOR.tools.trim( data.web.url ) ) || '';
 
 					set[ 'data-cke-saved-href' ] = url;
 
@@ -640,47 +584,9 @@
 			}
 
 			// Popups and target.
-			if ( data.target ) {
-				if ( data.target.type == 'popup' ) {
-					var onclickList = [
-							'window.open(this.href, \'', data.target.name || '', '\', \''
-						],
-						featureList = [
-							'resizable', 'status', 'location', 'toolbar', 'menubar', 'fullscreen', 'scrollbars', 'dependent'
-						],
-						featureLength = featureList.length,
-						addFeature = function( featureName ) {
-							if ( data.target[ featureName ] )
-								featureList.push( featureName + '=' + data.target[ featureName ] );
-						};
-
-					for ( var i = 0; i < featureLength; i++ )
-						featureList[ i ] = featureList[ i ] + ( data.target[ featureList[ i ] ] ? '=yes' : '=no' );
-
-					addFeature( 'width' );
-					addFeature( 'left' );
-					addFeature( 'height' );
-					addFeature( 'top' );
-
-					onclickList.push( featureList.join( ',' ), '\'); return false;' );
-					set[ 'data-cke-pa-onclick' ] = onclickList.join( '' );
-				}
-				else if ( data.target.type != 'notSet' && data.target.name ) {
-					set.target = data.target.name;
-				}
-			}
-
-			// Advanced attributes.
-			if ( data.advanced ) {
-				for ( var a in advAttrNames ) {
-					var val = data.advanced[ advAttrNames[ a ] ];
-
-					if ( val )
-						set[ a ] = val;
-				}
-
-				if ( set.name )
-					set[ 'data-cke-saved-name' ] = set.name;
+			var newWindow = data.web.openInNewWindow || data.document.openInNewWindow
+			if ( newWindow ) {
+				set.target = '_blank';
 			}
 
 			// Browser need the "href" fro copy/paste link to work. (#6641)
@@ -693,9 +599,6 @@
 				'data-cke-pa-onclick': 1,
 				'data-cke-saved-name': 1
 			};
-
-			if ( data.advanced )
-				CKEDITOR.tools.extend( removed, advAttrNames );
 
 			// Remove all attributes which are not currently set.
 			for ( var s in set )

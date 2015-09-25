@@ -142,7 +142,7 @@
 					children: [ {
 						type: 'text',
 						id: 'url',
-						label: commonLang.url,
+						label: 'Web',
 						labelLayout: 'horizontal',
 						className: 'cke_dialog_url',
 						widths: [ '70px' ],
@@ -165,8 +165,8 @@
 						},
 						setup: function( data ) {
 							this.allowOnChange = false;
-							if ( data.url )
-								this.setValue( data.url.url );
+							if ( data.web )
+								this.setValue( data.web.url );
 							else
 								this.setValue( '' );
 							this.allowOnChange = true;
@@ -184,10 +184,10 @@
 							target.getElement()[ showTarget ? 'show' : 'hide' ]();
 						},
 						commit: function( data ) {
-							if ( !data.url )
-								data.url = {};
+							if ( !data.web )
+								data.web = {};
 
-							data.url.url = this.getValue();
+							data.web.url = this.getValue();
 							this.allowOnChange = false;
 						}
 					},
@@ -197,18 +197,15 @@
 						label: linkLang.openInNewWindow,
 						className: 'cke_dialog_new_window',
 						setup: function( data ) {
-							if ( data.target ) {
-								var val = data.target.type === 'notSet' ? false : true;
-								this.setValue( val );
+							if ( data.web ) {
+								this.setValue( data.web.openInNewWindow );
 							}
 						},
 						commit: function( data ) {
-							if ( !data.target )
-								data.target = {};
+							if ( !data.web )
+								data.web = {};
 
-							var type = this.getValue() ? '_blank' : 'notSet';
-							data.target.type = type;
-							data.target.name = type;
+							data.web.openInNewWindow = !!this.getValue();
 						}
 					} ]
 				},
@@ -309,18 +306,14 @@
 						label: linkLang.openInNewWindow,
 						className: 'cke_dialog_new_window',
 						setup: function( data ) {
-							if ( data.target ) {
-								var val = data.target.type === 'notSet' ? false : true;
-								this.setValue( val );
-							}
+							if ( data.document )
+								this.setValue( data.document.openInNewWindow );
 						},
 						commit: function( data ) {
-							if ( !data.target )
-								data.target = {};
+							if ( !data.document )
+								data.document = {};
 
-							var type = this.getValue() ? '_blank' : 'notSet';
-							data.target.type = type;
-							data.target.name = type;
+							data.document.openInNewWindow = this.getValue();
 						}
 					} ]
 				} ]
@@ -342,7 +335,7 @@
 
 				var data = plugin.parseLinkAttributes( editor, element );
 
-				var hideRemove = !data.type || data.type === 'email' && !data.email.address || data.type === 'url' && !data.url.url || data.type === 'document' && !data.document.url;
+				var hideRemove = !data.type || data.type === 'email' && !data.email.address || data.type === 'url' && !data.web.url || data.type === 'document' && !data.document.url;
 				this.getButton('remove').getElement()[ hideRemove ? 'hide' : 'show' ]();
 
 				// Record down the selected element in the dialog.
@@ -359,7 +352,7 @@
 				var selection = editor.getSelection(),
 					attributes = plugin.getLinkAttributes( editor, data );
 
-				if (data.type === 'email' && !data.email.address || data.type === 'url' && !data.url.url || data.type === 'document' && !data.document.url) {
+				if (data.type === 'email' && !data.email.address || data.type === 'url' && !data.web.url || data.type === 'document' && !data.document.url) {
 					editor.execCommand('unlink');
 					return;
 				}
