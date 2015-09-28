@@ -147,7 +147,7 @@
 						className: 'cke_dialog_url',
 						widths: [ '70px' ],
 						onLoad: function() {
-							this.getInputElement().setAttribute('placeholder', '#2 (section number) or http://example.com');
+							this.getInputElement().setAttribute('placeholder', 'http://example.com OR #2 (section number)');
 						},
 						validate: function() {
 							var dialog = this.getDialog();
@@ -176,12 +176,13 @@
 						},
 						onChange: function() {
 							var url = this.getValue();
-							var showTarget = true;
-							if ( !url || /^#/.test(url) )
-								showTarget = false;
 							var dialog = this.getDialog();
 							var target = dialog.getContentElement( 'info', 'linkTargetType' );
-							target.getElement()[ showTarget ? 'show' : 'hide' ]();
+							if ( /^#/.test(url) ) {
+								target.disable();
+							} else {
+								target.enable();
+							}
 						},
 						commit: function( data ) {
 							if ( !data.web )
@@ -194,18 +195,18 @@
 					{
 						type: 'checkbox',
 						id: 'linkTargetType',
-						label: linkLang.openInNewWindow,
-						className: 'cke_dialog_new_window',
+						label: linkLang.openInNewTab,
+						className: 'cke_dialog_new_tab',
 						setup: function( data ) {
 							if ( data.web ) {
-								this.setValue( data.web.openInNewWindow );
+								this.setValue( data.web.openInNewTab );
 							}
 						},
 						commit: function( data ) {
 							if ( !data.web )
 								data.web = {};
 
-							data.web.openInNewWindow = !!this.getValue();
+							data.web.openInNewTab = !!this.getValue();
 						}
 					} ]
 				},
@@ -303,17 +304,17 @@
 					}, {
 						type: 'checkbox',
 						id: 'uploadLinkTargetType',
-						label: linkLang.openInNewWindow,
-						className: 'cke_dialog_new_window',
+						label: linkLang.openInNewTab,
+						className: 'cke_dialog_new_tab',
 						setup: function( data ) {
 							if ( data.document )
-								this.setValue( data.document.openInNewWindow );
+								this.setValue( data.document.openInNewTab );
 						},
 						commit: function( data ) {
 							if ( !data.document )
 								data.document = {};
 
-							data.document.openInNewWindow = this.getValue();
+							data.document.openInNewTab = this.getValue();
 						}
 					} ]
 				} ]
@@ -335,8 +336,36 @@
 
 				var data = plugin.parseLinkAttributes( editor, element );
 
-				var hideRemove = !data.type || data.type === 'email' && !data.email.address || data.type === 'url' && !data.web.url || data.type === 'document' && !data.document.url;
-				this.getButton('remove').getElement()[ hideRemove ? 'hide' : 'show' ]();
+				var hideRemove = false;
+				var removeLabel = 'Remove Link';
+				switch ( data.type ) {
+					case 'email':
+						if (!data.email.address)
+							hideRemove = true;
+						else
+							removeLabel = 'Remove Email';
+						break;
+					case 'url':
+						if (!data.web.url)
+							hideRemove = true;
+						break;
+					case 'document':
+						if (!data.document.url)
+							hideRemove = true;
+						else
+							removeLabel = 'Remove Document';
+						break;
+					default:
+						hideRemove = true;
+						break;
+				}
+				var removeButton = this.getButton( 'remove' ).getElement();
+				if (hideRemove) {
+					removeButton.hide();
+				} else {
+					removeButton.getChild( [0] ).setText( removeLabel );
+					removeButton.show();
+				}
 
 				// Record down the selected element in the dialog.
 				this._.selectedElement = element;

@@ -999,12 +999,12 @@ a.cke_specialchar:active
 	padding-left: 5px;
 }
 
-.cke_dialog_ui_checkbox.cke_dialog_new_window {
+.cke_dialog_ui_checkbox.cke_dialog_new_tab {
 	display: block;
 	margin-top: 10px;
 }
 
-.cke_dialog_web .cke_dialog_ui_checkbox.cke_dialog_new_window {
+.cke_dialog_web .cke_dialog_ui_checkbox.cke_dialog_new_tab {
 	margin-left: 70px;
 }
 
@@ -1033,4 +1033,8 @@ a.cke_dialog_ui_button_ok {
 
 a.cke_dialog_ui_button i {
 	color: inherit;
+}
+
+.cke_dialog_ui_checkbox.cke_disabled label {
+	color: #aaa;
 }

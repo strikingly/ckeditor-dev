@@ -455,10 +455,10 @@
 			}
 
 			// Load target and popup settings.
-			var newWindow = false;
+			var newTab = false;
 			if ( element ) {
 				var target = element.getAttribute( 'target' );
-				newWindow = target === '_blank';
+				newTab = target === '_blank';
 			}
 
 			if ( !retval.type ) {
@@ -478,12 +478,12 @@
 						retval.type = 'document';
 						retval.document = {};
 						retval.document.url = href;
-						retval.document.openInNewWindow = newWindow;
+						retval.document.openInNewTab = newTab;
 					} else {
 						retval.type = 'url';
 						retval.web = {};
 						retval.web.url = href;
-						retval.web.openInNewWindow = newWindow;
+						retval.web.openInNewTab = newTab;
 					}
 				}
 			}
@@ -584,8 +584,8 @@
 			}
 
 			// Popups and target.
-			var newWindow = data.web.openInNewWindow || data.document.openInNewWindow
-			if ( newWindow ) {
+			var newTab = data.web.openInNewTab || data.document.openInNewTab
+			if ( newTab ) {
 				set.target = '_blank';
 			}
 

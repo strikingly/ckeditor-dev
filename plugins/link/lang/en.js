@@ -34,7 +34,7 @@ CKEDITOR.plugins.setLang( 'link', 'en', {
 	noEmail: 'Please type the e-mail address',
 	invalidEmail: 'Invalid e-mail address',
 	uploadDocument: 'Upload document',
-	openInNewWindow: 'Open in new window',
+	openInNewTab: 'Open in new tab',
 	noUrl: 'Please type the link URL',
 	other: '<other>',
 	popupDependent: 'Dependent (Netscape)',
