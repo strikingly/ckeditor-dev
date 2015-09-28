@@ -147,7 +147,7 @@
 						className: 'cke_dialog_url',
 						widths: [ '70px' ],
 						onLoad: function() {
-							this.getInputElement().setAttribute('placeholder', 'http://example.com OR #2 (section number)');
+							this.getInputElement().setAttribute('placeholder', 'e.g. http://abc.com OR #2 (section number)');
 						},
 						validate: function() {
 							var dialog = this.getDialog();
@@ -218,7 +218,7 @@
 					widths: [ '70px' ],
 					className: 'cke_dialog_email',
 					onLoad: function() {
-						this.getInputElement().setAttribute('placeholder', 'john@example.com');
+						this.getInputElement().setAttribute('placeholder', 'e.g. john@example.com');
 					},
 					validate: function() {
 						var dialog = this.getDialog();
