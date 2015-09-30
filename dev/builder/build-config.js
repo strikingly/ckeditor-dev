@@ -101,6 +101,7 @@ var CKBUILDER_CONFIG = {
 	},
 	js: [
 		'release/ckeditor/lang/en.js',
-		'release/ckeditor/styles.js'
+		'release/ckeditor/styles.js',
+		'release/ckeditor/plugins/pastefromword/filter/default.js'
 	]
 };
