@@ -522,6 +522,7 @@
 			switch ( data.type ) {
 				case 'url':
 					var url = ( data.web && CKEDITOR.tools.trim( data.web.url ) ) || '';
+					if ( !/^#|^(http|https|ftp|mailto|tel|fb|skype|itms-services|javascript|sms|irc):/i.test( url ) ) url = 'http://' + url;
 
 					set[ 'data-cke-saved-href' ] = url;
 
