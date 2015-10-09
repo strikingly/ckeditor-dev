@@ -123,9 +123,9 @@
 					'default': 'url',
 					className: 'cke_dialog_link_type',
 					items: [
-						[ 'Web', 'url' ],
+						[ linkLang.toWeb, 'url' ],
 						[ linkLang.toEmail, 'email' ],
-						[ 'Document', 'document' ],
+						[ linkLang.toDocument, 'document' ],
 					],
 					onChange: linkTypeChanged,
 					setup: function( data ) {
@@ -142,12 +142,12 @@
 					children: [ {
 						type: 'text',
 						id: 'url',
-						label: 'URL',
+						label: linkLang.url,
 						labelLayout: 'horizontal',
 						className: 'cke_dialog_url',
 						widths: [ '70px' ],
 						onLoad: function() {
-							this.getInputElement().setAttribute('placeholder', 'e.g. http://abc.com OR #2 (section number)');
+							this.getInputElement().setAttribute('placeholder', linkLang.urlPlaceholder);
 						},
 						validate: function() {
 							var dialog = this.getDialog();
@@ -213,12 +213,12 @@
 				{
 					type: 'text',
 					id: 'emailOptions',
-					label: 'Address',
+					label: linkLang.emailAddress,
 					labelLayout: 'horizontal',
 					widths: [ '70px' ],
 					className: 'cke_dialog_email',
 					onLoad: function() {
-						this.getInputElement().setAttribute('placeholder', 'e.g. john@example.com');
+						this.getInputElement().setAttribute('placeholder', linkLang.emailPlaceholder);
 					},
 					validate: function() {
 						var dialog = this.getDialog();
@@ -260,7 +260,7 @@
 						children: [ {
 							type: 'button',
 							id: 'upload',
-							label: 'Upload file',
+							label: linkLang.upload,
 							className: 'cke_dialog_upload',
 							onLoad: function() {
 								var span = this.getElement().getChild([0]);
@@ -337,13 +337,13 @@
 				var data = plugin.parseLinkAttributes( editor, element );
 
 				var hideRemove = false;
-				var removeLabel = 'Remove Link';
+				var removeLabel = linkLang.removeLink;
 				switch ( data.type ) {
 					case 'email':
 						if (!data.email.address)
 							hideRemove = true;
 						else
-							removeLabel = 'Remove Email';
+							removeLabel = linkLang.removeEmail;
 						break;
 					case 'url':
 						if (!data.web.url)
@@ -353,7 +353,7 @@
 						if (!data.document.url)
 							hideRemove = true;
 						else
-							removeLabel = 'Remove Document';
+							removeLabel = linkLang.removeDocument;
 						break;
 					default:
 						hideRemove = true;
