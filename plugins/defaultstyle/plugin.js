@@ -20,21 +20,20 @@ CKEDITOR.plugins.add( 'defaultstyle', {
 		});
 
 		editor.on( 'change', function() {
-			if ( executingCmd || editor.getData() ) return;
+			// can't use editor.getData() because it changes content
+			// which disrupts IMEs
+			if ( executingCmd || editor.editable().getText().trim() ) return;
 			editor.applyStyle( style );
 		});
 
 		editor.on( 'focus', function() {
-			if ( editor.getData() ) return;
+			if ( editor.editable().getText().trim() ) return;
 
-			editor.setData('', {
-				noSnapshot: true,
-				callback: function() {
-					setTimeout(function () {
-						editor.applyStyle( style );
-					}, 0);
-				}
-			});
+			// use setTimeout because directly calling doesn't apply style,
+			// need investigation
+			setTimeout(function() {
+				editor.applyStyle( style );
+			}, 0)
 		});
 	}
 });
