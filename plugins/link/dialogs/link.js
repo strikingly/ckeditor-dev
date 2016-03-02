@@ -256,7 +256,7 @@
 					id: 'documentOptions',
 					children: [ {
 						type: 'hbox',
-						widths: '10px',
+						widths: [ '10px' ],
 						children: [ {
 							type: 'button',
 							id: 'upload',
