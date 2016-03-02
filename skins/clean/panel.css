@@ -85,6 +85,7 @@ panel contents and color panels check menu.css and colorpanel.css.
 {
 	overflow-y: auto;
 	overflow-x: hidden;
+	background-color: #333;
 }
 
 /*

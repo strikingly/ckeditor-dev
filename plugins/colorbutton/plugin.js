@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
@@ -91,8 +91,6 @@ CKEDITOR.plugins.add( 'colorbutton', {
 					if ( !color || color == 'transparent' )
 						color = '#ffffff';
 
-					this._.panel._.iframe.getFrameDocument().getById( colorBoxId ).setStyle( 'background-color', color );
-
 					return color;
 				}
 			} );
@@ -129,50 +127,40 @@ CKEDITOR.plugins.add( 'colorbutton', {
 
 				panel.hide();
 
+				var selection = editor.getSelection();
+				if (!selection) {
+					return;
+				}
+
 				editor.fire( 'saveSnapshot' );
 
-				// Clean up any conflicting style within the range.
-				editor.removeStyle( new CKEDITOR.style( config[ 'colorButton_' + type + 'Style' ], { color: 'inherit' } ) );
+				var bookmarks = selection.createBookmarks();
 
-				if ( color ) {
-					var colorStyle = config[ 'colorButton_' + type + 'Style' ];
+				var range = editor.createRange();
+				range.selectNodeContents( editor.editable() );
+				var iterator = range.createIterator();
+				iterator.enlargeBr = true;
 
-					colorStyle.childRule = type == 'back' ?
-					function( element ) {
-						// It's better to apply background color as the innermost style. (#3599)
-						// Except for "unstylable elements". (#6103)
-						return isUnstylable( element );
-					} : function( element ) {
-						// Fore color style must be applied inside links instead of around it. (#4772,#6908)
-						return !( element.is( 'a' ) || element.getElementsByTag( 'a' ).count() ) || isUnstylable( element );
-					};
-
-					editor.applyStyle( new CKEDITOR.style( colorStyle, { color: color } ) );
+				while ( block = iterator.getNextParagraph( 'p' ) ) {
+					if ( block.isReadOnly() ) continue;
+					block.removeStyle( 'color' );
+					if ( color ) {
+						block.setStyle( 'color', color );
+					}
 				}
+
+				editor.focus();
+				editor.forceNextSelectionCheck();
+				selection.selectBookmarks( bookmarks );
 
 				editor.fire( 'saveSnapshot' );
 			} );
 
-			// Render the "Automatic" button.
-			output.push( '<a class="cke_colorauto" _cke_focus=1 hidefocus=true' +
-				' title="', lang.auto, '"' +
-				' onclick="CKEDITOR.tools.callFunction(', clickFn, ',null,\'', type, '\');return false;"' +
-				' href="javascript:void(\'', lang.auto, '\')"' +
-				' role="option" aria-posinset="1" aria-setsize="', total, '">' +
-				'<table role="presentation" cellspacing=0 cellpadding=0 width="100%">' +
-					'<tr>' +
-						'<td>' +
-							'<span class="cke_colorbox" id="', colorBoxId, '"></span>' +
-						'</td>' +
-						'<td colspan=7 align=center>', lang.auto, '</td>' +
-					'</tr>' +
-				'</table>' +
-				'</a>' +
-				'<table role="presentation" cellspacing=0 cellpadding=0 width="100%">' );
+			output.push( '<table role="presentation" cellspacing=0 cellpadding=0 width="100%">' );
 
 			// Render the color boxes.
 			for ( var i = 0; i < colors.length; i++ ) {
-				if ( ( i % 8 ) === 0 )
+				if ( ( i % 5 ) === 0 )
 					output.push( '</tr><tr>' );
 
 				var parts = colors[ i ].split( '/' ),
@@ -192,7 +180,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 						' onclick="CKEDITOR.tools.callFunction(', clickFn, ',\'', colorName, '\',\'', type, '\'); return false;"' +
 						' href="javascript:void(\'', colorLabel, '\')"' +
 						' role="option" aria-posinset="', ( i + 2 ), '" aria-setsize="', total, '">' +
-						'<span class="cke_colorbox" style="background-color:#', colorCode, '"></span>' +
+						'<span class="cke_colorbox" style="background-color:#', colorCode, ';border-color:#', colorCode, '"></span>' +
 					'</a>' +
 					'</td>' );
 			}
