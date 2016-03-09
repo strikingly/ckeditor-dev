@@ -19,14 +19,27 @@ CKEDITOR.plugins.add( 'colorbutton', {
 		var config = editor.config,
 			lang = editor.lang.colorbutton;
 
+		var classNames = config.colorButton_colors.map(function (color) {
+			return config.colorButton_colorClassNamePattern.replace('%s', color)
+		})
+
 		if ( !CKEDITOR.env.hc ) {
 			addButton( 'TextColor', 'fore', lang.textColorTitle, 10 );
 			addButton( 'BGColor', 'back', lang.bgColorTitle, 20 );
 		}
 
 		function addButton( name, type, title, order ) {
-			var style = new CKEDITOR.style( config[ 'colorButton_' + type + 'Style' ] ),
-				colorBoxId = CKEDITOR.tools.getNextId() + '_colorBox';
+			if (type === 'fore') {
+				var style = {
+					'caption div h1 h2 h3 h4 h5 h6 p pre td th li': {
+						propertiesOnly: true,
+						classes: classNames.join(',')
+					}
+				}
+			} else {
+				var style = new CKEDITOR.style( config[ 'colorButton_' + type + 'Style' ] )
+			}
+			var colorBoxId = CKEDITOR.tools.getNextId() + '_colorBox';
 
 			editor.ui.add( name, CKEDITOR.UI_PANELBUTTON, {
 				label: title,
@@ -63,8 +76,8 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				},
 
 				refresh: function() {
-					if ( !editor.activeFilter.check( style ) )
-						this.setState( CKEDITOR.TRISTATE_DISABLED );
+					// if ( !editor.activeFilter.check( style ) )
+					// 	this.setState( CKEDITOR.TRISTATE_DISABLED );
 				},
 
 				// The automatic colorbox should represent the real color (#6010)
@@ -98,14 +111,15 @@ CKEDITOR.plugins.add( 'colorbutton', {
 
 		function renderColors( panel, type, colorBoxId ) {
 			var output = [],
-				colors = config.colorButton_colors.split( ',' ),
+				colors = config.colorButton_colors,
+				classNamePattern = config.colorButton_colorClassNamePattern,
 				// Tells if we should include "More Colors..." button.
 				moreColorsEnabled = editor.plugins.colordialog && config.colorButton_enableMore !== false,
 				// aria-setsize and aria-posinset attributes are used to indicate size of options, because
 				// screen readers doesn't play nice with table, based layouts (#12097).
 				total = colors.length + ( moreColorsEnabled ? 2 : 1 );
 
-			var clickFn = CKEDITOR.tools.addFunction( function( color, type ) {
+			var clickFn = CKEDITOR.tools.addFunction( function( color, className, type ) {
 				var applyColorStyle = arguments.callee;
 				function onColorDialogClose( evt ) {
 					this.removeListener( 'ok', onColorDialogClose );
@@ -143,9 +157,11 @@ CKEDITOR.plugins.add( 'colorbutton', {
 
 				while ( block = iterator.getNextParagraph( 'p' ) ) {
 					if ( block.isReadOnly() ) continue;
-					block.removeStyle( 'color' );
-					if ( color ) {
-						block.setStyle( 'color', color );
+					classNames.forEach(function(name) {
+						block.removeClass( name );
+					})
+					if ( color !== "default" ) {
+						block.addClass( className );
 					}
 				}
 
@@ -156,31 +172,30 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				editor.fire( 'saveSnapshot' );
 			} );
 
-			output.push( '<table role="presentation" cellspacing=0 cellpadding=0 width="100%">' );
+			output.push( '<table role="presentation" cellspacing=0 cellpadding=0>' );
 
 			// Render the color boxes.
 			for ( var i = 0; i < colors.length; i++ ) {
-				if ( ( i % 5 ) === 0 )
+				if ( ( i % 4 ) === 0 )
 					output.push( '</tr><tr>' );
 
-				var parts = colors[ i ].split( '/' ),
-					colorName = parts[ 0 ],
-					colorCode = parts[ 1 ] || colorName;
+				var color = colors[ i ]
 
-				// The data can be only a color code (without #) or colorName + color code
-				// If only a color code is provided, then the colorName is the color with the hash
-				// Convert the color from RGB to RRGGBB for better compatibility with IE and <font>. See #5676
-				if ( !parts[ 1 ] )
-					colorName = '#' + colorName.replace( /^(.)(.)(.)$/, '$1$1$2$2$3$3' );
+
+				var parts = color.split( '/' ),
+					colorName = parts[ 0 ],
+					colorCode = parts[ 1 ] || colorName,
+					textClassName = classNamePattern.replace('%s', colorName),
+					iconClassName = textClassName + '-ckicon'
 
 				var colorLabel = editor.lang.colorbutton.colors[ colorCode ] || colorCode;
+				colorLabel =
 				output.push( '<td>' +
 					'<a class="cke_colorbox" _cke_focus=1 hidefocus=true' +
 						' title="', colorLabel, '"' +
-						' onclick="CKEDITOR.tools.callFunction(', clickFn, ',\'', colorName, '\',\'', type, '\'); return false;"' +
-						' href="javascript:void(\'', colorLabel, '\')"' +
+						' onclick="CKEDITOR.tools.callFunction(', clickFn, ',\'', colorName, '\',\'', textClassName, '\',\'', type, '\');"' +
 						' role="option" aria-posinset="', ( i + 2 ), '" aria-setsize="', total, '">' +
-						'<span class="cke_colorbox" style="background-color:#', colorCode, ';border-color:#', colorCode, '"></span>' +
+						'<span class="cke_colorbox ', iconClassName, '"></span>' +
 					'</a>' +
 					'</td>' );
 			}
@@ -233,11 +248,9 @@ CKEDITOR.plugins.add( 'colorbutton', {
  * @cfg {String} [colorButton_colors=see source]
  * @member CKEDITOR.config
  */
-CKEDITOR.config.colorButton_colors = '000,800000,8B4513,2F4F4F,008080,000080,4B0082,696969,' +
-	'B22222,A52A2A,DAA520,006400,40E0D0,0000CD,800080,808080,' +
-	'F00,FF8C00,FFD700,008000,0FF,00F,EE82EE,A9A9A9,' +
-	'FFA07A,FFA500,FFFF00,00FF00,AFEEEE,ADD8E6,DDA0DD,D3D3D3,' +
-	'FFF0F5,FAEBD7,FFFFE0,F0FFF0,F0FFFF,F0F8FF,E6E6FA,FFF';
+CKEDITOR.config.colorButton_colors = ['default', 'white', 'gray', 'black'];
+
+CKEDITOR.config.colorButton_colorClassNamePattern = '%s'
 
 /**
  * Stores the style definition that applies the text foreground color.
