@@ -277,9 +277,6 @@ CKEDITOR.plugins.add( 'floatpanel', {
 							if ( CKEDITOR.env.ie && CKEDITOR.env.quirks && width > 0 )
 								width += ( target.$.offsetWidth || 0 ) - ( target.$.clientWidth || 0 ) + 3;
 
-							// Add some extra pixels to improve the appearance.
-							width += 3;
-
 							target.setStyle( 'width', width + 'px' );
 
 							var height = block.element.$.scrollHeight;

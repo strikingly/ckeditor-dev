@@ -19,14 +19,27 @@ CKEDITOR.plugins.add( 'colorbutton', {
 		var config = editor.config,
 			lang = editor.lang.colorbutton;
 
-		var classNames = config.colorButton_colors.map(function (color) {
+		var colors = config.colorButton_colors.map(function (color) {
+			return color[0]
+		});
+		colors.push('custom1', 'custom2')
+
+		var iconColors = config.colorButton_colors.map(function (color) {
+			return color[1]
+		});
+		var classNames = colors.map(function (color) {
 			return config.colorButton_colorClassNamePattern.replace('%s', color)
-		})
+		});
 
 		if ( !CKEDITOR.env.hc ) {
 			addButton( 'TextColor', 'fore', lang.textColorTitle, 10 );
-			addButton( 'BGColor', 'back', lang.bgColorTitle, 20 );
 		}
+
+		var customColorRowId = CKEDITOR.tools.getNextId() + '_customColor';
+		var customColorIds = {
+			custom1: CKEDITOR.tools.getNextId() + '_customColor',
+			custom2: CKEDITOR.tools.getNextId() + '_customColor'
+		};
 
 		function addButton( name, type, title, order ) {
 			if (type === 'fore') {
@@ -75,43 +88,35 @@ CKEDITOR.plugins.add( 'colorbutton', {
 					keys[ 32 ] = 'click'; // SPACE
 				},
 
-				refresh: function() {
-					// if ( !editor.activeFilter.check( style ) )
-					// 	this.setState( CKEDITOR.TRISTATE_DISABLED );
-				},
-
-				// The automatic colorbox should represent the real color (#6010)
 				onOpen: function() {
-
-					var selection = editor.getSelection(),
-						block = selection && selection.getStartElement(),
-						path = editor.elementPath( block ),
-						color;
-
-					if ( !path )
+					var customColors = config.colorButton_customColorCallback()
+					var doc = this._.panel._.iframe.getFrameDocument()
+					var row = doc.getById( customColorRowId )
+					if (!customColors) {
+						row.hide();
 						return;
-
-					// Find the closest block element.
-					block = path.block || path.blockLimit || editor.document.getBody();
-
-					// The background color might be transparent. In that case, look up the color in the DOM tree.
-					do {
-						color = block && block.getComputedStyle( type == 'back' ? 'background-color' : 'color' ) || 'transparent';
 					}
-					while ( type == 'back' && color == 'transparent' && block && ( block = block.getParent() ) );
-
-					// The box should never be transparent.
-					if ( !color || color == 'transparent' )
-						color = '#ffffff';
-
-					return color;
+					row.show()
+					doc.getById( customColorIds.custom1 ).setStyle( 'background-color', customColors[0] );
+					doc.getById( customColorIds.custom2 ).setStyle( 'background-color', customColors[1] );
 				}
 			} );
+
+			if (type === 'fore') {
+				editor.on('selectionChange', function() {
+					var btn = editor.ui.get(name)
+					var element = CKEDITOR.document.getById( btn._.id );
+					var span = element.find('.cke_button_icon').getItem(0)
+					var path = editor.elementPath();
+					var firstBlock = path.block || path.blockLimit;
+					var computedColor = firstBlock.getComputedStyle( 'color' );
+					span.setStyle('background', computedColor)
+				})
+			}
 		}
 
 		function renderColors( panel, type, colorBoxId ) {
 			var output = [],
-				colors = config.colorButton_colors,
 				classNamePattern = config.colorButton_colorClassNamePattern,
 				// Tells if we should include "More Colors..." button.
 				moreColorsEnabled = editor.plugins.colordialog && config.colorButton_enableMore !== false,
@@ -172,30 +177,66 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				editor.fire( 'saveSnapshot' );
 			} );
 
-			output.push( '<table role="presentation" cellspacing=0 cellpadding=0>' );
+			output.push( '<table width="86px" style="table-layout: fixed; padding: 3px;" role="presentation" cellspacing=0 cellpadding=0>' );
 
 			// Render the color boxes.
 			for ( var i = 0; i < colors.length; i++ ) {
-				if ( ( i % 4 ) === 0 )
-					output.push( '</tr><tr>' );
-
-				var color = colors[ i ]
-
-
-				var parts = color.split( '/' ),
+				var color = colors[ i ],
+					parts = color.split( '/' ),
 					colorName = parts[ 0 ],
-					colorCode = parts[ 1 ] || colorName,
 					textClassName = classNamePattern.replace('%s', colorName),
-					iconClassName = textClassName + '-ckicon'
+					iconClassName = 'cke_coloricon_' + colorName
 
-				var colorLabel = editor.lang.colorbutton.colors[ colorCode ] || colorCode;
-				colorLabel =
-				output.push( '<td>' +
+				if ( ( i % 4 ) === 0 ) {
+					if (colorName == 'custom1') {
+						output.push( '</tr><tr id="' + customColorRowId + '">' );
+					} else {
+						output.push( '</tr><tr>' );
+					}
+				}
+
+				var colorStyle = '';
+				var colorId = ''
+				var c = ''
+				if (colorName === 'default') {
+					// var path = editor.elementPath();
+					// var firstBlock = path.block || path.blockLimit;
+					// var className
+					// classNames.forEach(function(name) {
+					// 	if (firstBlock.hasClass(name)) {
+					// 		className = name
+					// 		firstBlock.removeClass( name );
+					// 	}
+					// })
+					// c = firstBlock.getComputedStyle( 'color' );
+					// if (className) firstBlock.addClass(className)
+					// colorId = 'id="' + colorBoxId + '"'
+				} else if (colorName === 'custom1' || colorName === 'custom2') {
+					colorId = 'id="' + customColorIds[colorName] + '"'
+				} else {
+					c = iconColors[i]
+				}
+				if (c) {
+					colorStyle = ' style="background: ' + c + ';"'
+				}
+
+				var colorLabel = editor.lang.colorbutton.colors[ colorName ];
+				if (colorName == 'custom1') {
+					var customClickFn = CKEDITOR.tools.addFunction(function() {
+						if (config.colorButton_customColorClickCallback) {
+							config.colorButton_customColorClickCallback()
+						}
+					})
+					var td = '<td class="cke_customcolor_label" onclick="CKEDITOR.tools.callFunction(' + customClickFn + ');" colspan=2>CUSTOM</td><td>'
+				} else {
+					var td = '<td>'
+				}
+				output.push( td +
 					'<a class="cke_colorbox" _cke_focus=1 hidefocus=true' +
 						' title="', colorLabel, '"' +
 						' onclick="CKEDITOR.tools.callFunction(', clickFn, ',\'', colorName, '\',\'', textClassName, '\',\'', type, '\');"' +
 						' role="option" aria-posinset="', ( i + 2 ), '" aria-setsize="', total, '">' +
-						'<span class="cke_colorbox ', iconClassName, '"></span>' +
+						'<span class="cke_colorbox ', iconClassName, '"', colorId, colorStyle, '></span>' +
 					'</a>' +
 					'</td>' );
 			}

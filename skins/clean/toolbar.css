@@ -247,6 +247,14 @@ a.cke_button_off:active
 	border: 0;
 }
 
+.cke_button__textcolor_icon
+{
+	border: 1px solid #aaa;
+	border-radius: 100%;
+	width: 14px;
+    height: 14px;
+}
+
 /* The vertical separator which is used within a single toolbar to split
    buttons into sub-groups. */
 .cke_toolbar_separator

@@ -71,9 +71,9 @@ then
 	VERSION=$TAG
 fi
 
-java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build ../../ release $JAVA_ARGS --version="$VERSION" --revision="$REVISION" --overwrite --no-zip --no-tar --skip-omitted-in-build-config
+java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build ../../ ~/dev/strikingly/ckeditor/vendor/assets/javascripts $JAVA_ARGS --version="$VERSION" --revision="$REVISION" --overwrite --no-zip --no-tar --skip-omitted-in-build-config --leave-js-unminified --leave-css-unminified
 
-java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build-skin ../../skins/clean release/ckeditor/skins/clean --overwrite
+java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build-skin ../../skins/clean ~/dev/strikingly/ckeditor/vendor/assets/javascripts/ckeditor/skins/clean --overwrite -leave-js-unminified --leave-css-unminified
 
 # Copy and build tests
 if [[ "$ARGS" == *\ \-t\ * ]]; then
