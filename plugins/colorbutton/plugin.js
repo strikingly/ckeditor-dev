@@ -68,6 +68,20 @@ CKEDITOR.plugins.add( 'colorbutton', {
 					attributes: { role: 'listbox', 'aria-label': lang.panelTitle }
 				},
 
+				onRender: function() {
+					if (type === 'fore') {
+						editor.on('selectionChange', function() {
+							var btn = editor.ui.get(name)
+							var element = CKEDITOR.document.getById( btn._.id );
+							var span = element.find('.cke_button_icon').getItem(0)
+							var path = editor.elementPath();
+							var firstBlock = path.block || path.blockLimit;
+							var computedColor = firstBlock.getComputedStyle( 'color' );
+							span.setStyle('background', computedColor)
+						})
+					}
+				},
+
 				onBlock: function( panel, block ) {
 					block.autoSize = true;
 					block.element.addClass( 'cke_colorblock' );
@@ -101,18 +115,6 @@ CKEDITOR.plugins.add( 'colorbutton', {
 					doc.getById( customColorIds.custom2 ).setStyle( 'background-color', customColors[1] );
 				}
 			} );
-
-			if (type === 'fore') {
-				editor.on('selectionChange', function() {
-					var btn = editor.ui.get(name)
-					var element = CKEDITOR.document.getById( btn._.id );
-					var span = element.find('.cke_button_icon').getItem(0)
-					var path = editor.elementPath();
-					var firstBlock = path.block || path.blockLimit;
-					var computedColor = firstBlock.getComputedStyle( 'color' );
-					span.setStyle('background', computedColor)
-				})
-			}
 		}
 
 		function renderColors( panel, type, colorBoxId ) {
