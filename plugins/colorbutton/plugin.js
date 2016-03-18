@@ -77,7 +77,8 @@ CKEDITOR.plugins.add( 'colorbutton', {
 							var path = editor.elementPath();
 							var firstBlock = path.block || path.blockLimit;
 							var computedColor = firstBlock.getComputedStyle( 'color' );
-							span.setStyle('background', computedColor)
+							var iconStyles = config.colorButton_iconStyles(computedColor)
+							span.setStyles(iconStyles)
 						})
 					}
 				},
@@ -229,7 +230,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 							config.colorButton_customColorClickCallback()
 						}
 					})
-					var td = '<td class="cke_customcolor_label" onclick="CKEDITOR.tools.callFunction(' + customClickFn + ');" colspan=2>CUSTOM</td><td>'
+					var td = '<td class="cke_customcolor_label" onclick="CKEDITOR.tools.callFunction(' + customClickFn + ');" colspan=2>' + editor.lang.colorbutton.custom +'</td><td>'
 				} else {
 					var td = '<td>'
 				}
