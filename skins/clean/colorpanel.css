@@ -141,3 +141,7 @@ span.cke_coloricon_default {
 .cke_customcolor_label:hover {
 	color: #fff;
 }
+
+a:hover.cke_colorbox span.cke_coloricon_white {
+	border-color: #F6E32C !important;
+}

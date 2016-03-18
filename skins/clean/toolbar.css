@@ -249,10 +249,12 @@ a.cke_button_off:active
 
 .cke_button__textcolor_icon
 {
-	border: 1px solid #aaa;
+	border: 1px solid transparent;
+	background-clip: content-box;
 	border-radius: 100%;
-	width: 14px;
-    height: 14px;
+	width: 12px;
+    height: 12px;
+    margin-top: 2px;
 }
 
 /* The vertical separator which is used within a single toolbar to split
