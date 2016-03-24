@@ -65,7 +65,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 
 				panel: {
 					css: CKEDITOR.skin.getPath( 'editor' ),
-					attributes: { role: 'listbox', 'aria-label': lang.panelTitle }
+					attributes: { role: 'listbox', 'aria-label': '' }
 				},
 
 				onRender: function() {
@@ -104,16 +104,44 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				},
 
 				onOpen: function() {
-					var customColors = config.colorButton_getCustomColors()
 					var doc = this._.panel._.iframe.getFrameDocument()
+
+					// highlight current color
+					var path = editor.elementPath();
+					var firstBlock = path.block || path.blockLimit;
+					var activeItem = doc.find('.cke_coloricon_active').getItem(0)
+					if (activeItem) activeItem.removeClass('cke_coloricon_active')
+					var defaultTr = doc.getById('cke_coloricon_default')
+					defaultTr.hide()
+					config.colorButton_colors.some(function(color) {
+						var colorName = color[0]
+						if (colorName === 'default') return
+
+						var colorClass = config.colorButton_colorClassNamePattern.replace('%s', colorName)
+						if (firstBlock.hasClass(colorClass)) {
+							defaultTr.show()
+							doc.find('.cke_coloricon_' + colorName).getItem(0).addClass('cke_coloricon_active')
+							return true
+						}
+					})
+
+					// enable custom color
+					var customColors = config.colorButton_getCustomColors()
+
 					var row = doc.getById( customColorRowId )
 					if (!customColors) {
 						row.hide();
 						return;
 					}
 					row.show()
-					doc.getById( customColorIds.custom1 ).setStyle( 'background-color', customColors[0] );
-					doc.getById( customColorIds.custom2 ).setStyle( 'background-color', customColors[1] );
+					doc.getById( customColorIds.custom1 ).find('.cke_colorbox').getItem(0).setStyle( 'background-color', customColors[0] );
+					var c2 = doc.getById( customColorIds.custom2 )
+					if (!customColors[1]) {
+						c2.hide()
+					} else {
+						c2.show()
+						c2.find('.cke_colorbox').getItem(0).setStyle( 'background-color', customColors[1] );
+					}
 				}
 			} );
 		}
@@ -183,80 +211,53 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				editor.fire( 'saveSnapshot' );
 			} );
 
-			output.push( '<table width="86px" style="table-layout: fixed; padding: 3px;" role="presentation" cellspacing=0 cellpadding=0>' );
+			output.push( '<table style="table-layout: fixed; padding: 3px;" role="presentation" cellspacing=0 cellpadding=0>' );
 
 			// Render the color boxes.
 			for ( var i = 0; i < colors.length; i++ ) {
-				var color = colors[ i ],
-					parts = color.split( '/' ),
-					colorName = parts[ 0 ],
+				var colorName = colors[ i ],
 					textClassName = classNamePattern.replace('%s', colorName),
 					iconClassName = 'cke_coloricon_' + colorName
 
-				if ( ( i % 4 ) === 0 ) {
-					if (colorName == 'custom1') {
-						output.push( '</tr><tr id="' + customColorRowId + '">' );
-					} else {
-						output.push( '</tr><tr>' );
-					}
+				if (colorName === 'default') {
+					output.push( '</tr><tr id="cke_coloricon_default">' );
+				} else if (i > 0 && (colors[i - 1] === 'default' || colors[i - 1] === 'black')) {
+					output.push( '</tr><tr>' );
+				} else if (colorName == 'custom1') {
+					output.push( '</tr><tr id="' + customColorRowId + '">' );
 				}
 
 				var colorStyle = '';
 				var colorId = ''
-				var c = ''
-				if (colorName === 'default') {
-					// var path = editor.elementPath();
-					// var firstBlock = path.block || path.blockLimit;
-					// var className
-					// classNames.forEach(function(name) {
-					// 	if (firstBlock.hasClass(name)) {
-					// 		className = name
-					// 		firstBlock.removeClass( name );
-					// 	}
-					// })
-					// c = firstBlock.getComputedStyle( 'color' );
-					// if (className) firstBlock.addClass(className)
-					// colorId = 'id="' + colorBoxId + '"'
-				} else if (colorName === 'custom1' || colorName === 'custom2') {
-					colorId = 'id="' + customColorIds[colorName] + '"'
-				} else {
-					c = iconColors[i]
-				}
-				if (c) {
-					colorStyle = ' style="background: ' + c + ';"'
-				}
-
-				var colorLabel = editor.lang.colorbutton.colors[ colorName ];
-				if (colorName == 'custom1') {
+				var td = '<td>'
+				var text = ''
+				switch (colorName) {
+				case 'default':
+					td = '<td colspan="4">'
+					text = '<span class="cke_coloricon_label">USE DEFAULT</span>'
+					break;
+				case 'custom1':
 					var customClickFn = CKEDITOR.tools.addFunction(function() {
 						if (config.colorButton_clickCustomColorLabelCallback) {
 							config.colorButton_clickCustomColorLabelCallback()
 						}
 					})
-					var td = '<td class="cke_customcolor_label" onclick="CKEDITOR.tools.callFunction(' + customClickFn + ');" colspan=2>' + editor.lang.colorbutton.custom +'</td><td>'
-				} else {
-					var td = '<td>'
+					td = '<td class="cke_customcolor_label" onclick="CKEDITOR.tools.callFunction(' + customClickFn + ');" colspan="2">' + editor.lang.colorbutton.custom +'</td><td>'
+					// fallthrough
+				case 'custom2':
+					colorId = ' id="' + customColorIds[colorName] + '"';
+					break;
+				default:
+					colorStyle = ' style="background: ' + iconColors[i] + ';"';
+					break;
 				}
 				output.push( td +
-					'<a class="cke_colorbox" _cke_focus=1 hidefocus=true' +
-						' title="', colorLabel, '"' +
+					'<a class="cke_colorbox" _cke_focus=1 hidefocus=true' + colorId +
 						' onclick="CKEDITOR.tools.callFunction(', clickFn, ',\'', colorName, '\',\'', textClassName, '\',\'', type, '\');"' +
 						' role="option" aria-posinset="', ( i + 2 ), '" aria-setsize="', total, '">' +
-						'<span class="cke_colorbox ', iconClassName, '"', colorId, colorStyle, '></span>' +
+						'<span class="cke_colorbox ', iconClassName, '"', colorStyle, '></span>' + text +
 					'</a>' +
 					'</td>' );
-			}
-
-			// Render the "More Colors" button.
-			if ( moreColorsEnabled ) {
-				output.push( '</tr>' +
-					'<tr>' +
-						'<td colspan=8 align=center>' +
-							'<a class="cke_colormore" _cke_focus=1 hidefocus=true' +
-								' title="', lang.more, '"' +
-								' onclick="CKEDITOR.tools.callFunction(', clickFn, ',\'?\',\'', type, '\');return false;"' +
-								' href="javascript:void(\'', lang.more, '\')"', ' role="option" aria-posinset="', total, '" aria-setsize="', total, '">', lang.more, '</a>' +
-						'</td>' ); // tr is later in the code.
 			}
 
 			output.push( '</tr></table>' );

@@ -66,9 +66,10 @@ The COLOR PALETTE section instead is a table with a variable number of cells
 span.cke_colorbox
 {
 	border: transparent 1px solid;
-	width: 13px;
-	height: 13px;
-	float: left;
+	width: 14px;
+	height: 14px;
+	display: inline-block;
+	vertical-align: middle;
 	border-radius: 50%;
 }
 
@@ -81,9 +82,7 @@ span.cke_colorbox
 a.cke_colorbox
 {
 	padding: 3px;
-	float: left;
-	width: 14px;
-	height: 14px;
+	display: block;
 }
 
 .cke_rtl a.cke_colorbox
@@ -94,7 +93,8 @@ a.cke_colorbox
 /* Different states of the a.cke_colorbox wrapper. */
 a:hover.cke_colorbox span.cke_colorbox,
 a:focus.cke_colorbox span.cke_colorbox,
-a:active.cke_colorbox span.cke_colorbox
+a:active.cke_colorbox span.cke_colorbox,
+.cke_coloricon_active
 {
 	border-color: #fff !important;
 }
@@ -131,17 +131,30 @@ span.cke_coloricon_default {
 	background: url(images/cancel.png) no-repeat;
 }
 
+.cke_coloricon_default {
+	vertical-align: middle;
+}
+
 .cke_customcolor_label {
-	color: #b3b3b3;
-	font-size: 8px;
-	cursor: default;
 	padding-left: 3px;
 	padding-top: 3px;
 }
-.cke_customcolor_label:hover {
+
+.cke_coloricon_label, .cke_customcolor_label {
+	color: #b3b3b3;
+	font-size: 8px;
+	cursor: default;
+}
+
+.cke_coloricon_label {
+	margin-left: 6px;
+}
+
+.cke_colorbox:hover .cke_coloricon_label, .cke_customcolor_label:hover {
 	color: #fff;
 }
 
-a:hover.cke_colorbox span.cke_coloricon_white {
+a:hover.cke_colorbox span.cke_coloricon_white,
+.cke_coloricon_white.cke_coloricon_active {
 	border-color: #ffb400 !important;
 }
