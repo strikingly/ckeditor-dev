@@ -104,7 +104,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				},
 
 				onOpen: function() {
-					var customColors = config.colorButton_customColorCallback()
+					var customColors = config.colorButton_getCustomColors()
 					var doc = this._.panel._.iframe.getFrameDocument()
 					var row = doc.getById( customColorRowId )
 					if (!customColors) {
@@ -128,6 +128,9 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				total = colors.length + ( moreColorsEnabled ? 2 : 1 );
 
 			var clickFn = CKEDITOR.tools.addFunction( function( color, className, type ) {
+				if (config.colorButton_clickCustomColorCallback) {
+					config.colorButton_clickCustomColorCallback(color)
+				}
 				var applyColorStyle = arguments.callee;
 				function onColorDialogClose( evt ) {
 					this.removeListener( 'ok', onColorDialogClose );
@@ -226,8 +229,8 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				var colorLabel = editor.lang.colorbutton.colors[ colorName ];
 				if (colorName == 'custom1') {
 					var customClickFn = CKEDITOR.tools.addFunction(function() {
-						if (config.colorButton_customColorClickCallback) {
-							config.colorButton_customColorClickCallback()
+						if (config.colorButton_clickCustomColorLabelCallback) {
+							config.colorButton_clickCustomColorLabelCallback()
 						}
 					})
 					var td = '<td class="cke_customcolor_label" onclick="CKEDITOR.tools.callFunction(' + customClickFn + ');" colspan=2>' + editor.lang.colorbutton.custom +'</td><td>'
