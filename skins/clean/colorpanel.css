@@ -71,6 +71,9 @@ span.cke_colorbox
 	display: inline-block;
 	vertical-align: middle;
 	border-radius: 50%;
+	text-align: center;
+	line-height: 14px;
+	color: #fff;
 }
 
 .cke_rtl span.cke_colorbox
@@ -83,6 +86,7 @@ a.cke_colorbox
 {
 	padding: 3px;
 	display: block;
+	cursor: pointer;
 }
 
 .cke_rtl a.cke_colorbox
@@ -97,6 +101,10 @@ a:active.cke_colorbox span.cke_colorbox,
 .cke_coloricon_active
 {
 	border-color: #fff !important;
+}
+
+.cke_coloricon_active:before {
+	content: "✓";
 }
 
 /* Buttons which are visible at the top/bottom of the color palette:
@@ -129,6 +137,7 @@ span.cke_coloricon_default {
 	width: 16px;
 	height: 16px;
 	background: url(images/cancel.png) no-repeat;
+	opacity: 0.4;
 }
 
 .cke_coloricon_default {
@@ -143,7 +152,7 @@ span.cke_coloricon_default {
 .cke_coloricon_label, .cke_customcolor_label {
 	color: #b3b3b3;
 	font-size: 8px;
-	cursor: default;
+	cursor: pointer;
 }
 
 .cke_coloricon_label {
@@ -153,8 +162,15 @@ span.cke_coloricon_default {
 .cke_colorbox:hover .cke_coloricon_label, .cke_customcolor_label:hover {
 	color: #fff;
 }
+a:hover.cke_colorbox span.cke_coloricon_default {
+	opacity: 1;
+}
 
 a:hover.cke_colorbox span.cke_coloricon_white,
 .cke_coloricon_white.cke_coloricon_active {
 	border-color: #ffb400 !important;
+}
+
+.cke_coloricon_white.cke_coloricon_active {
+	color: #ffb400;
 }
