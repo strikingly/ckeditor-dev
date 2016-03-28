@@ -23,10 +23,12 @@ CKEDITOR.plugins.add( 'colorbutton', {
 			return color[0]
 		});
 		colors.push('custom1', 'custom2')
+		colors.unshift('default')
 
 		var iconColors = config.colorButton_colors.map(function (color) {
 			return color[1]
 		});
+		iconColors.unshift(null)
 		var classNames = colors.map(function (color) {
 			return config.colorButton_colorClassNamePattern.replace('%s', color)
 		});
@@ -113,10 +115,9 @@ CKEDITOR.plugins.add( 'colorbutton', {
 					if (activeItem) activeItem.removeClass('cke_coloricon_active')
 					var defaultTr = doc.getById('cke_coloricon_default')
 					defaultTr.hide()
-					config.colorButton_colors.some(function(color) {
-						var colorName = color[0]
-						if (colorName === 'default') return
-
+					var colorNames = config.colorButton_colors.map(function(color) {return color[0]})
+					colorNames.push('custom1', 'custom2')
+					colorNames.some(function(colorName) {
 						var colorClass = config.colorButton_colorClassNamePattern.replace('%s', colorName)
 						if (firstBlock.hasClass(colorClass)) {
 							defaultTr.show()
@@ -221,10 +222,10 @@ CKEDITOR.plugins.add( 'colorbutton', {
 
 				if (colorName === 'default') {
 					output.push( '</tr><tr id="cke_coloricon_default">' );
-				} else if (i > 0 && (colors[i - 1] === 'default' || colors[i - 1] === 'black')) {
-					output.push( '</tr><tr>' );
-				} else if (colorName == 'custom1') {
+				} else if (colorName === 'custom1') {
 					output.push( '</tr><tr id="' + customColorRowId + '">' );
+				} else if (colorName !== 'custom2' && i > 0 && (i - 1) % 4 === 0 ) {
+					output.push( '</tr><tr>' );
 				}
 
 				var colorStyle = '';
@@ -296,7 +297,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
  * @cfg {String} [colorButton_colors=see source]
  * @member CKEDITOR.config
  */
-CKEDITOR.config.colorButton_colors = ['default', 'white', 'gray', 'black'];
+CKEDITOR.config.colorButton_colors = [['white', '#fff'], ['black', '#000']];
 
 CKEDITOR.config.colorButton_colorClassNamePattern = '%s'
 
