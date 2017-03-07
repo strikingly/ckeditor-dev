@@ -219,6 +219,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 							block.addClass( className );
 						}
 					}
+					editor.forceNextSelectionCheck();
 				}
 
 				editor.focus();
