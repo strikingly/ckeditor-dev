@@ -24,16 +24,46 @@ CKEDITOR.plugins.add( 'fontsize', {
 
 			var bookmarks = selection.createBookmarks();
 
-			var range = editor.createRange();
-			range.selectNodeContents( editor.editable() );
-			var iterator = range.createIterator();
-			iterator.enlargeBr = true;
+			if (this.editor.config.advancedEditor) {
+				var ranges = selection.getRanges() || [];
+				var _this = this;
+				function getBlockContainer(element) {
+					var elName = element.getName();				
+					var parent = element.getParent(),
+						pName = parent.getName();
+					if(elName === 'p' || elName === 'li' || pName === 'div') {
+						return element;
+					} else {
+						return getBlockContainer(parent);
+					}
+				}
+				ranges.map(function(range) {
+					var walker = new CKEDITOR.dom.walker(range);
+					var element = walker.next() || range.endPath().elements[0];
+					while(element) {
+						if (element.type === CKEDITOR.NODE_TEXT) {
+							element = element.getParent();
+						}
+						element = getBlockContainer(element);
+						if (_this.value)  {
+							element.setStyle('font-size', _this.value + '%')
+						}
 
-			while ( block = iterator.getNextParagraph( 'p' ) ) {
-				if ( block.isReadOnly() ) continue;
-				block.removeStyle( 'font-size' );
-				if ( this.value !== 100 ) {
-					block.setStyle( 'font-size', this.value + '%' );
+						element = walker.next()
+					}
+				})
+			} else {
+				var range = editor.createRange();
+				range.selectNodeContents( editor.editable() );
+				var iterator = range.createIterator();
+				iterator.enlargeBr = true;
+
+				while ( block = iterator.getNextParagraph( 'p' ) ) {
+					if ( block.isReadOnly() ) continue;
+					block.removeStyle( 'font-size' );
+					if ( this.value !== 100 ) {
+						block.setStyle( 'font-size', this.value + '%' );
+					}
 				}
 			}
 

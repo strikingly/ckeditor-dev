@@ -56,6 +56,20 @@ CKEDITOR.plugins.add( 'colorbutton', {
 			}
 			var colorBoxId = CKEDITOR.tools.getNextId() + '_colorBox';
 
+			editor.on('selectionChange', function(e) {
+				var btn = editor.ui.get(name)
+				var element = CKEDITOR.document.getById( btn._.id );
+				var span = element.find('.cke_button_icon').getItem(0)
+				if ( editor.config.advancedEditor ) {
+					var computedColor = e.data.selection.getStartElement().getComputedStyle('color')
+				} else {
+					var path = editor.elementPath();
+					var firstBlock = path.block || path.blockLimit;
+					var computedColor = firstBlock.getComputedStyle( 'color' );
+				}
+				var iconStyles = config.colorButton_iconStyles(computedColor)
+				span.setStyles(iconStyles)
+			})	
 			editor.ui.add( name, CKEDITOR.UI_PANELBUTTON, {
 				label: title,
 				title: title,
@@ -68,21 +82,6 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				panel: {
 					css: CKEDITOR.skin.getPath( 'editor' ),
 					attributes: { role: 'listbox', 'aria-label': '' }
-				},
-
-				onRender: function() {
-					if (type === 'fore') {
-						editor.on('selectionChange', function() {
-							var btn = editor.ui.get(name)
-							var element = CKEDITOR.document.getById( btn._.id );
-							var span = element.find('.cke_button_icon').getItem(0)
-							var path = editor.elementPath();
-							var firstBlock = path.block || path.blockLimit;
-							var computedColor = firstBlock.getComputedStyle( 'color' );
-							var iconStyles = config.colorButton_iconStyles(computedColor)
-							span.setStyles(iconStyles)
-						})
-					}
 				},
 
 				onBlock: function( panel, block ) {
@@ -188,34 +187,50 @@ CKEDITOR.plugins.add( 'colorbutton', {
 
 				editor.fire( 'saveSnapshot' );
 
-				var bookmarks = selection.createBookmarks();
+				if (editor.config.advancedEditor) {
+					var colorStyle = config[ 'colorButton_' + type + 'Style' ];
+					// Clean up any conflicting style within the range.
+					classNames.map(function(className) {
+						editor.removeStyle( new CKEDITOR.style( colorStyle, {className: className}))
+					});
 
-				var range = editor.createRange();
-				range.selectNodeContents( editor.editable() );
-				var iterator = range.createIterator();
-				iterator.enlargeBr = true;
+					if ( color ) {
+						// get classname
+						var colorClassName = config.colorButton_colorClassNamePattern.replace('%s', color);
+						
+						colorStyle.childRule = function( element ) {
+							// Fore color style must be applied inside links instead of around it. (#4772,#6908)
+							return !( element.is( 'a' ) || element.getElementsByTag( 'a' ).count() ) || isUnstylable( element );
+						};
+						editor.applyStyle( new CKEDITOR.style( colorStyle, { className: colorClassName } ) );
+					}
+				} else {
+					var range = editor.createRange();
+					range.selectNodeContents( editor.editable() );
+					var iterator = range.createIterator();
+					iterator.enlargeBr = true;
 
-				while ( block = iterator.getNextParagraph( 'p' ) ) {
-					if ( block.isReadOnly() ) continue;
-					classNames.forEach(function(name) {
-						block.removeClass( name );
-					})
-					if ( color !== "default" ) {
-						block.addClass( className );
+					while ( block = iterator.getNextParagraph( 'p' ) ) {
+						if ( block.isReadOnly() ) continue;
+						classNames.forEach(function(name) {
+							block.removeClass( name );
+						})
+						if ( color !== "default" ) {
+							block.addClass( className );
+						}
 					}
 				}
 
 				editor.focus();
-				editor.forceNextSelectionCheck();
-				selection.selectBookmarks( bookmarks );
 
 				editor.fire( 'saveSnapshot' );
 			} );
+			// end clickFn
 
 			output.push( '<table style="table-layout: fixed; padding: 3px;" role="presentation" cellspacing=0 cellpadding=0>' );
 
 			// Render the color boxes.
-			for ( var i = 0; i < colors.length; i++ ) {
+			for ( var i = 0, len = colors.length; i < len; i++ ) {
 				var colorName = colors[ i ],
 					textClassName = classNamePattern.replace('%s', colorName),
 					iconClassName = 'cke_coloricon_' + colorName
@@ -315,11 +330,12 @@ CKEDITOR.config.colorButton_colorClassNamePattern = '%s'
  */
 CKEDITOR.config.colorButton_foreStyle = {
 	element: 'span',
-	styles: { 'color': '#(color)' },
+  //styles: { 'color': '#(color)' },
+	attributes: { class: '#(className)' },
 	overrides: [ {
-		element: 'font', attributes: { 'color': null }
+		element: 'font', attributes: { 'class': null }
 	} ]
-};
+}
 
 /**
  * Stores the style definition that applies the text background color.
