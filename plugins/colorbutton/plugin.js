@@ -71,7 +71,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				span.setStyles(iconStyles)
 			})	
 			editor.ui.add( name, CKEDITOR.UI_PANELBUTTON, {
-				label: title,
+				label: '', // remove tooltip
 				title: title,
 				modes: { wysiwyg: 1 },
 				editorFocus: 0,
@@ -87,6 +87,8 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				onBlock: function( panel, block ) {
 					block.autoSize = true;
 					block.element.addClass( 'cke_colorblock' );
+					// Set width for the block manually
+					block.element.setStyle( 'width', '94px' );
 					block.element.setHtml( renderColors( panel, type, colorBoxId ) );
 					// The block should not have scrollbars (#5933, #6056)
 					block.element.getDocument().getBody().setStyle( 'overflow', 'hidden' );
