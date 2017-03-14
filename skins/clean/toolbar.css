@@ -369,3 +369,8 @@ a.cke_toolbox_collapser
 	margin-top: 0;
 	margin-right: 2px;
 }
+
+/* add hand cursor for all ck buttons */
+a.cke_button, a.cke_menubutton {
+  cursor: pointer;
+}

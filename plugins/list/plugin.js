@@ -809,6 +809,92 @@
 		return last && last.type == CKEDITOR.NODE_ELEMENT && last.getName() in listNodeNames ? last : null;
 	}
 
+// The html
+	function renderLineGroupBlock() {
+    var editor= this;
+
+		var ulstyle = CKEDITOR.skin.getIconStyle('bulletedlist', false),
+			olstyle = CKEDITOR.skin.getIconStyle('numberedlist', false);
+			
+    var clickFn = CKEDITOR.tools.addFunction(function(type){
+      // type: 'ul' or 'ol' 
+      switch(type) {
+        case 'ul':
+          editor.execCommand('bulletedlist');
+          break;
+        case 'ol':
+          editor.execCommand('numberedlist');
+          break;
+      }
+    })
+
+		reHtml = '<table style="table-layout: fixed;overflow: hidden;"><tr><td>'
+		
+		reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ul\')" hidefocus=true data-l="ul"><span class="cke_button_icon cke_button__bulletedlist_icon" style="' + ulstyle + '"></span></a>'
+		
+		reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ol\')" hidefocus=true data-l="ol"><span class="cke_button_icon cke_button__numberedlist_icon" style="' + olstyle + '"></span></a></td></tr></table>'
+
+		return reHtml
+  }
+
+	function getContainerElementName(el) {
+		var elName = el.getName();
+
+		if ((/^(div|p|ol|ul)$/gi).test(elName)) {
+			return elName
+		} else {
+			return getContainerElementName(el.getParent()); 
+		}
+	}
+
+	function onSelectionChange(toolbarName, blockEl) {
+		var editor = this;
+		var el = editor.getSelection().getStartElement();
+		var elType = getContainerElementName(el);
+
+		var btn = editor.ui.get(toolbarName);
+		var element = CKEDITOR.document.getById(btn._.id);
+		var span = element.find('.cke_button_icon').getItem(0);
+		var style, cla, highlight = true;
+		switch (elType) {
+			case 'ul':
+				cla = 'bulletedlist';
+				style = CKEDITOR.skin.getIconStyle('bulletedlist', false);
+				break;
+			case 'ol':
+				cla = 'numberedlist';
+				style = CKEDITOR.skin.getIconStyle('numberedlist', false);
+				break;
+			default:
+				cla = 'bulletedlist';
+				style = CKEDITOR.skin.getIconStyle('bulletedlist', false);						
+				highlight = false;
+				break;
+		}
+		span.setAttributes({
+			'style': style,
+			'class': 'cke_button_icon cke_button__' + cla + '_icon',
+		})
+
+		if (highlight) {
+			element.removeClass('cke_button_off').addClass('cke_button_on');
+		} else {
+			element.removeClass('cke_button_on').addClass('cke_button_off');
+		}
+
+		if (blockEl.el) {
+			var btns = blockEl.el.find('a.cke_button')
+			
+			for (var i=0, len=btns.count(); i<len; i++ ){
+				btns.getItem(i).removeClass('cke_button_on').addClass('cke_button_off')
+			}
+			if (elType === 'ul' || elType === 'ol') {
+				blockEl.el.findOne('a[data-l=' + elType + ']').addClass('cke_button_on')
+			}
+		}
+
+	}
+
 	CKEDITOR.plugins.add( 'list', {
 		// jscs:disable maximumLineLength
 		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en,en-au,en-ca,en-gb,eo,es,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,tt,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
@@ -820,12 +906,46 @@
 			if ( editor.blockless )
 				return;
 
+			var blockEl = {}
+			var toolbarName = 'LineGroup';
+
 			// Register commands.
 			editor.addCommand( 'numberedlist', new listCommand( 'numberedlist', 'ol' ) );
 			editor.addCommand( 'bulletedlist', new listCommand( 'bulletedlist', 'ul' ) );
 
+			if (editor.config.redesignedTextEditor) {
+				// change icon status
+				editor.on('selectionChange', onSelectionChange.bind(editor, toolbarName, blockEl));
+			}
+			
 			// Register the toolbar button.
 			if ( editor.ui.addButton ) {
+				if (editor.config.redesignedTextEditor) {
+					editor.ui.add( toolbarName, CKEDITOR.UI_PANELBUTTON, {
+						//label: 'todo',
+						// editorFocus: 0,
+						modes: { wysiwyg: 1 },
+						toolbar: 'list,30',
+						editorFocus: 0,
+						panel: {
+							css: CKEDITOR.skin.getPath( 'editor' ),
+							attributes: { role: 'listbox', 'aria-label': '' }
+						},
+
+						onBlock: function( panel, block ) {
+							blockEl.el = block.element;
+							block.autoSize = true;
+							block.element.addClass( 'cke_linegroupblock' );
+							block.element.setStyle( 'width', '62px' ); // span(28px) * 2 + padding
+							block.element.setHtml( renderLineGroupBlock.apply(editor) );
+							block.element.getDocument().getBody().setStyle('overflow', 'hidden');
+
+							CKEDITOR.ui.fire('ready', this);
+
+							onSelectionChange.call(editor, toolbarName, blockEl);
+						}
+					})
+				}
 				editor.ui.addButton( 'NumberedList', {
 					label: editor.lang.list.numberedlist,
 					command: 'numberedlist',

@@ -73,7 +73,7 @@ fi
 
 java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build ../../ ~/strikingly/ckeditor/vendor/assets/javascripts $JAVA_ARGS --version="$VERSION" --revision="$REVISION" --overwrite --no-zip --no-tar --skip-omitted-in-build-config --leave-js-unminified --leave-css-unminified
 
-java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build-skin ../../skins/clean ~/strikingly/ckeditor/vendor/assets/javascripts/ckeditor/skins/clean --overwrite -leave-js-unminified --leave-css-unminified
+java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build-skin ../../skins/clean ~/strikingly/ckeditor/vendor/assets/javascripts/ckeditor/skins/clean --overwrite
 
 # Copy and build tests
 if [[ "$ARGS" == *\ \-t\ * ]]; then

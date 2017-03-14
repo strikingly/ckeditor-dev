@@ -67,6 +67,14 @@ Special outer level classes used in this file:
 	cursor: default;
 }
 
+.cke_menubutton_inner {
+	display: table-row;
+	cursor: pointer;
+}
+.cke_menubutton_inner span {
+	cursor: pointer;
+}
+
 .cke_menubutton:hover,
 .cke_menubutton:focus,
 .cke_menubutton:active

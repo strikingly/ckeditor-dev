@@ -30,8 +30,11 @@ CKEDITOR.plugins.add( 'fontsize', {
 				function getBlockContainer(element) {
 					var elName = element.getName();				
 					var parent = element.getParent(),
-						pName = parent.getName();
-					if(elName === 'p' || elName === 'li' || pName === 'div') {
+						pName = parent.getName(),
+						// More reliable way on checking whether the div is container or not
+						isContainer = parent.getAttribute('contenteditable') && pName === 'div'
+
+					if(elName === 'p' || elName === 'li' || isContainer) {
 						return element;
 					} else {
 						return getBlockContainer(parent);

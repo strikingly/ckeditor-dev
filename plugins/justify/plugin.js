@@ -183,6 +183,75 @@
 		}
 	};
 
+// The html
+	function renderJustifyGroupBlock() {
+    var editor= this;
+
+    var reHtml = '<table style="table-layout: fixed;overflow: hidden;">';
+
+    var clickFn = CKEDITOR.tools.addFunction(function(type){
+      switch(type) {
+        case 'left':
+          editor.execCommand('justifyleft');
+          break;
+        case 'center':
+          editor.execCommand('justifycenter');
+          break;
+				case 'right':
+          editor.execCommand('justifyright');
+          break;
+				case 'justify':
+          editor.execCommand('justifyblock');
+          break;
+      }
+
+    })
+
+		var leftStyle = CKEDITOR.skin.getIconStyle('justifyleft', false),
+			rightStyle = CKEDITOR.skin.getIconStyle('justifyright', false),
+			centerStyle = CKEDITOR.skin.getIconStyle('justifycenter', false),
+			justifyStyle = CKEDITOR.skin.getIconStyle('justifyblock', false);
+
+    reHtml += '<tr><td><a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'left\')" data-align="left"><span class="cke_button_icon cke_button__justifyleft_icon" style="' + leftStyle + '"></span></a>'
+    reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'center\')" data-align="center"><span class="cke_button_icon cke_button__justifycenter_icon" style="' + centerStyle + '"></span></a>'
+		reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'right\')" data-align="right"><span class="cke_button_icon cke_button__justifyright_icon" style="' + rightStyle + '"></span></a>'
+		reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'justify\')" data-align="justify"><span class="cke_button_icon cke_button__justifyblock_icon" style="' + justifyStyle + '"></span></a><td><tr></table>'
+
+    return reHtml
+  }
+
+	function getElementAlignment(el) {
+		var alignment = el.getComputedStyle('text-align')
+		return alignment === 'justify' ? 'block' : alignment
+	}
+
+	function onSelectionChange(toolbarName, blockEl) {
+		var editor = this;
+		var el = editor.getSelection().getStartElement();
+
+		var elAlignment = getElementAlignment(el);
+
+		var btn = editor.ui.get(toolbarName);
+		var element = CKEDITOR.document.getById(btn._.id);
+		var span = element.find('.cke_button_icon').getItem(0);
+		var cla = 'justify' + elAlignment,
+				style = CKEDITOR.skin.getIconStyle('justify' + elAlignment, false);
+
+		span.setAttributes({
+			'style': style,
+			'class': 'cke_button_icon cke_button__' + cla + '_icon',
+		})
+
+		if (blockEl.el) {
+			var btns = blockEl.el.find('a.cke_button')
+			
+			for (var i=0, len=btns.count(); i<len; i++ ){
+				btns.getItem(i).removeClass('cke_button_on').addClass('cke_button_off')
+			}
+			blockEl.el.findOne('a[data-align=' + (elAlignment === 'block' ? 'justify' : elAlignment) + ']').addClass('cke_button_on')
+		}
+	}
+
 	CKEDITOR.plugins.add( 'justify', {
 		// jscs:disable maximumLineLength
 		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en,en-au,en-ca,en-gb,eo,es,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,tt,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
@@ -192,6 +261,9 @@
 		init: function( editor ) {
 			if ( editor.blockless )
 				return;
+
+			var blockEl = {};
+			var toolbarName = 'JustifyGroup';
 
 			var left = new justifyCommand( editor, 'justifyleft', 'left' ),
 				center = new justifyCommand( editor, 'justifycenter', 'center' ),
@@ -203,7 +275,36 @@
 			editor.addCommand( 'justifyright', right );
 			editor.addCommand( 'justifyblock', justify );
 
+			if (editor.config.redesignedTextEditor) {
+				// Change icon status
+				editor.on('selectionChange', onSelectionChange.bind(editor, toolbarName, blockEl));
+			}
+
 			if ( editor.ui.addButton ) {
+				if (editor.config.redesignedTextEditor) {
+					editor.ui.add( toolbarName, CKEDITOR.UI_PANELBUTTON, {
+						modes: { wysiwyg: 1 },
+						toolbar: 'justify,50',
+						editorFocus: 0,
+						panel: {
+							css: CKEDITOR.skin.getPath( 'editor' ),
+							attributes: { role: 'justifybox', 'aria-label': '' }
+						},
+
+						onBlock: function( panel, block ) {
+							blockEl.el = block.element;
+							block.autoSize = true;
+							block.element.addClass( 'cke_justifygroupblock' );
+							block.element.setStyle( 'width', '122px' ); // span(28px) * 4 + padding
+							block.element.setHtml( renderJustifyGroupBlock.call(editor) );
+							block.element.getDocument().getBody().setStyle('overflow', 'hidden');
+
+							CKEDITOR.ui.fire('ready', this);
+
+							onSelectionChange.call(editor, toolbarName, blockEl);
+						}
+					})
+				}
 				editor.ui.addButton( 'JustifyLeft', {
 					label: editor.lang.justify.left,
 					command: 'justifyleft',

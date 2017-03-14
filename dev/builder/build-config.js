@@ -99,9 +99,9 @@ var CKBUILDER_CONFIG = {
 		// scayt: 1
 		// wysiwygarea: 1
 	},
-	js: [
-		'release/ckeditor/lang/en.js',
-		'release/ckeditor/styles.js',
-		'release/ckeditor/plugins/pastefromword/filter/default.js'
-	]
+//	js: [
+//		'release/ckeditor/lang/en.js',
+//		'release/ckeditor/styles.js',
+//		'release/ckeditor/plugins/pastefromword/filter/default.js'
+//	]
 };
