@@ -71,7 +71,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				span.setStyles(iconStyles)
 			})	
 			editor.ui.add( name, CKEDITOR.UI_PANELBUTTON, {
-				label: title,
+				label: '', // remove tooltip
 				title: title,
 				modes: { wysiwyg: 1 },
 				editorFocus: 0,

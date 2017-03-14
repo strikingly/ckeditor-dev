@@ -162,6 +162,7 @@ CKEDITOR.plugins.add( 'basicstyles', {
 		var blockEl = {};
 		editor.on('selectionChange', onSelectionChange.bind(editor, toolbarName, blockEl));
 		editor.ui.add(toolbarName, CKEDITOR.UI_PANELBUTTON, {
+			label: '', // remove tooltip
 			modes: { wysiwyg: 1 },
 			toolbar: 'script,60',
 			editorFocus: 0,
