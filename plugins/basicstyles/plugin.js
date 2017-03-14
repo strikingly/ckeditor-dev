@@ -135,8 +135,11 @@ CKEDITOR.plugins.add( 'basicstyles', {
 			var span = element.find('.cke_button_icon').getItem(0);
 			var arrow = element.find('.cke_button_arrow').getItem(0);
 
-			span.setText('‚Ä¢‚Ä¢‚Ä¢')
-			span.setStyle('color', 'white')
+			span.setText('...')
+			span.setStyles({
+				'color': 'white',
+				'text-align': 'center'
+			})
 			if (arrow) {
 				arrow.remove()
 			}
