@@ -374,3 +374,6 @@ a.cke_toolbox_collapser
 a.cke_button, a.cke_menubutton {
   cursor: pointer;
 }
+a.cke_button:focus {
+	outline: none;
+}

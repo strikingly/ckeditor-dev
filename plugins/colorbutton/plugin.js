@@ -89,6 +89,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 					block.element.addClass( 'cke_colorblock' );
 					// Set width for the block manually
 					block.element.setStyle( 'width', '94px' );
+					block.element.setStyle( 'outline', 'none' );
 					block.element.setHtml( renderColors( panel, type, colorBoxId ) );
 					// The block should not have scrollbars (#5933, #6056)
 					block.element.getDocument().getBody().setStyle( 'overflow', 'hidden' );
