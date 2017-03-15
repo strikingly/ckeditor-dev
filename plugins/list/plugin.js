@@ -942,7 +942,7 @@
 			if ( editor.ui.addButton ) {
 				if (editor.config.redesignedTextEditor) {
 					editor.ui.add( toolbarName, CKEDITOR.UI_PANELBUTTON, {
-						//label: 'todo',
+						label: '',
 						// editorFocus: 0,
 						modes: { wysiwyg: 1 },
 						toolbar: 'list,30',
