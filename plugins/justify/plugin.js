@@ -285,13 +285,13 @@
 			editor.addCommand( 'justifyright', right );
 			editor.addCommand( 'justifyblock', justify );
 
-			if (editor.config.redesignedTextEditor) {
+			if (editor.config.alignmentDropdown) {
 				// Change icon status
 				editor.on('selectionChange', onSelectionChange.bind(editor, toolbarName, blockEl));
 			}
 
 			if ( editor.ui.addButton ) {
-				if (editor.config.redesignedTextEditor) {
+				if (editor.config.alignmentDropdown) {
 					editor.ui.add( toolbarName, CKEDITOR.UI_PANELBUTTON, {
 						label: '', // remove tooltip
 						modes: { wysiwyg: 1 },

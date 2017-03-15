@@ -913,6 +913,12 @@
 			}
 		}	
 
+		// remove triangle
+		var triangleSpan = element.findOne('.cke_button_arrow');
+		if (triangleSpan) {
+			triangleSpan.remove();
+		}
+
 	}
 
 	CKEDITOR.plugins.add( 'list', {
@@ -933,44 +939,40 @@
 			editor.addCommand( 'numberedlist', new listCommand( 'numberedlist', 'ol' ) );
 			editor.addCommand( 'bulletedlist', new listCommand( 'bulletedlist', 'ul' ) );
 
-			if (editor.config.redesignedTextEditor) {
 				// change icon status
-				editor.on('selectionChange', onSelectionChange.bind(editor, toolbarName, blockEl));
-			}
+			editor.on('selectionChange', onSelectionChange.bind(editor, toolbarName, blockEl));
 			
 			// Register the toolbar button.
 			if ( editor.ui.addButton ) {
-				if (editor.config.redesignedTextEditor) {
-					editor.ui.add( toolbarName, CKEDITOR.UI_PANELBUTTON, {
-						label: '',
-						// editorFocus: 0,
-						modes: { wysiwyg: 1 },
-						toolbar: 'list,30',
-						editorFocus: 0,
-						panel: {
-							css: CKEDITOR.skin.getPath( 'editor' ),
-							attributes: { role: 'listbox', 'aria-label': '' }
-						},
+				editor.ui.add( toolbarName, CKEDITOR.UI_PANELBUTTON, {
+					label: '',
+					// editorFocus: 0,
+					modes: { wysiwyg: 1 },
+					toolbar: 'list,30',
+					editorFocus: 0,
+					panel: {
+						css: CKEDITOR.skin.getPath( 'editor' ),
+						attributes: { role: 'listbox', 'aria-label': '' }
+					},
 
-						onBlock: function( panel, block ) {
-							blockEl.el = block.element;
-							block.autoSize = true;
-							block.element.addClass( 'cke_linegroupblock' );
-							block.element.setStyles({
-								'width': '84px',
-								'overflow': 'hidden',
-								'white-space': 'nowrap',
-								'outline': 'none'
-							}); // span(28px) * 2 + padding
-							block.element.setHtml( renderLineGroupBlock.apply(editor) );
-							block.element.getDocument().getBody().setStyle('overflow', 'hidden');
+					onBlock: function( panel, block ) {
+						blockEl.el = block.element;
+						block.autoSize = true;
+						block.element.addClass( 'cke_linegroupblock' );
+						block.element.setStyles({
+							'width': '84px',
+							'overflow': 'hidden',
+							'white-space': 'nowrap',
+							'outline': 'none'
+						}); // span(28px) * 2 + padding
+						block.element.setHtml( renderLineGroupBlock.apply(editor) );
+						block.element.getDocument().getBody().setStyle('overflow', 'hidden');
 
-							CKEDITOR.ui.fire('ready', this);
+						CKEDITOR.ui.fire('ready', this);
 
-							onSelectionChange.call(editor, toolbarName, blockEl);
-						}
-					})
-				}
+						onSelectionChange.call(editor, toolbarName, blockEl);
+					}
+				})
 				editor.ui.addButton( 'NumberedList', {
 					label: editor.lang.list.numberedlist,
 					command: 'numberedlist',
