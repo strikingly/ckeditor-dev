@@ -231,7 +231,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 			} );
 			// end clickFn
 
-			output.push( '<table style="table-layout: fixed; padding: 3px;" role="presentation" cellspacing=0 cellpadding=0>' );
+			output.push( '<table class="ck_btn_with_gray_border_top" style="table-layout: fixed; padding: 3px;" role="presentation" cellspacing=0 cellpadding=0>' );
 
 			// Render the color boxes.
 			for ( var i = 0, len = colors.length; i < len; i++ ) {

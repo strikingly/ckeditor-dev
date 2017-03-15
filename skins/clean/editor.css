@@ -70,3 +70,14 @@ legend.cke_voice_label
 {
 	display: none;
 }
+
+.ck_btn_with_gray_border_top, a.ck_btn_with_gray_border_top {
+  border-top: 1px solid #777;
+}
+
+/* add border-top for fontsize dropdown
+  NEVER write this on panel block
+ */
+a.cke_menubutton__fontsizeSmaller {
+  border-top: 1px solid #777;
+}

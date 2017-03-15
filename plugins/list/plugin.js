@@ -836,12 +836,12 @@
       }
     })
 
-		reHtml = '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ul\')" hidefocus=true data-l="ul" style="float: left;outline: none;"><span class="cke_button_icon cke_button__bulletedlist_icon" style="' + ulstyle + '"></span></a>';
+		reHtml = '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ul\')" hidefocus=true data-l="ul" style="float: left;outline: none;"><span class="cke_button_icon cke_button__bulletedlist_icon" style="' + ulstyle + '"></span></a>';
 		
-		reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ol\')" hidefocus=true data-l="ol" style="float: left;outline: none;"><span class="cke_button_icon cke_button__numberedlist_icon" style="' + olstyle + '"></span></a>';
+		reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ol\')" hidefocus=true data-l="ol" style="float: left;outline: none;"><span class="cke_button_icon cke_button__numberedlist_icon" style="' + olstyle + '"></span></a>';
 
 		if (shouldAddRemoveBtn) {
-			reHtml += '<a class="cke_button cke_button_off" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'' + nowType + '\', \'1\')" hidefocus=true style="float: left;outline: none;"><span class="cke_button_icon" style="\'font-size\': 12px;transform: rotate(45deg);color: white;text-align: center;line-height: 15px;">+</span></a>';
+			reHtml += '<a class="cke_button ck_btn_with_gray_border_top cke_button_off" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'' + nowType + '\', \'1\')" hidefocus=true style="float: left;outline: none;"><span class="cke_button_icon" style="\'font-size\': 12px;transform: rotate(45deg);color: white;text-align: center;line-height: 15px;">+</span></a>';
 		}
 
 		return reHtml

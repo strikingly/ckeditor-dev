@@ -120,8 +120,8 @@ CKEDITOR.plugins.add( 'basicstyles', {
 			var subStyle = CKEDITOR.skin.getIconStyle('subscript', false),
 				supStyle = CKEDITOR.skin.getIconStyle('superscript', false);
 
-			reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'sub\')" data-type="sub" style="float: left;outline: none;"><span class="cke_button_icon cke_button__subscript_icon" style="' + subStyle + '"></span></a>'
-			reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'sup\')" data-type="sup" style="float: left;outline: none;"><span class="cke_button_icon cke_button__superscript_icon" style="' + supStyle + '"></span></a>'
+			reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'sub\')" data-type="sub" style="float: left;outline: none;"><span class="cke_button_icon cke_button__subscript_icon" style="' + subStyle + '"></span></a>'
+			reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'sup\')" data-type="sup" style="float: left;outline: none;"><span class="cke_button_icon cke_button__superscript_icon" style="' + supStyle + '"></span></a>'
 
 			return reHtml
 		}
