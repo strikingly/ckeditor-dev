@@ -55,9 +55,9 @@ panel contents and color panels check menu.css and colorpanel.css.
     box-shadow: 0 0 3px rgba(0,0,0,.15);
 }
 
-/* remove the fucking blue border */
 .cke_panel_block {
 	outline: none;
+	border-top: 1px solid #777;
 }
 
 /* This class represents panels which are used as context menus. */
