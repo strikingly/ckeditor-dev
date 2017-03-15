@@ -55,6 +55,10 @@ panel contents and color panels check menu.css and colorpanel.css.
     box-shadow: 0 0 3px rgba(0,0,0,.15);
 }
 
+.cke_panel_block {
+	outline: none;
+}
+
 /* This class represents panels which are used as context menus. */
 .cke_menu_panel
 {

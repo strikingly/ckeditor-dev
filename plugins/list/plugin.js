@@ -810,13 +810,21 @@
 	}
 
 // The html
-	function renderLineGroupBlock() {
+	var status = {
+		nowType: '',
+	};
+	function renderLineGroupBlock(shouldAddRemoveBtn, nowType) {
     var editor= this;
 
 		var ulstyle = CKEDITOR.skin.getIconStyle('bulletedlist', false),
 			olstyle = CKEDITOR.skin.getIconStyle('numberedlist', false);
 			
-    var clickFn = CKEDITOR.tools.addFunction(function(type){
+    var clickFn = CKEDITOR.tools.addFunction(function(type, force){
+			if (status.nowType === type && !force) {
+				editor.focus();
+				editor.forceNextSelectionCheck();
+				return
+			}
       // type: 'ul' or 'ol' 
       switch(type) {
         case 'ul':
@@ -828,11 +836,13 @@
       }
     })
 
-		reHtml = '<table style="table-layout: fixed;overflow: hidden;"><tr><td>'
+		reHtml = '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ul\')" hidefocus=true data-l="ul" style="float: left;outline: none;"><span class="cke_button_icon cke_button__bulletedlist_icon" style="' + ulstyle + '"></span></a>';
 		
-		reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ul\')" hidefocus=true data-l="ul"><span class="cke_button_icon cke_button__bulletedlist_icon" style="' + ulstyle + '"></span></a>'
-		
-		reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ol\')" hidefocus=true data-l="ol"><span class="cke_button_icon cke_button__numberedlist_icon" style="' + olstyle + '"></span></a></td></tr></table>'
+		reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ol\')" hidefocus=true data-l="ol" style="float: left;outline: none;"><span class="cke_button_icon cke_button__numberedlist_icon" style="' + olstyle + '"></span></a>';
+
+		if (shouldAddRemoveBtn) {
+			reHtml += '<a class="cke_button ck_btn_with_gray_border_top cke_button_off" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'' + nowType + '\', \'1\')" hidefocus=true style="float: left;outline: none;"><span class="cke_button_icon" style="\'font-size\': 12px;transform: rotate(45deg);color: white;text-align: center;line-height: 15px;">+</span></a>';
+		}
 
 		return reHtml
   }
@@ -876,6 +886,8 @@
 			'class': 'cke_button_icon cke_button__' + cla + '_icon',
 		})
 
+		status.nowType = elType
+
 		if (highlight) {
 			element.removeClass('cke_button_off').addClass('cke_button_on');
 		} else {
@@ -883,15 +895,23 @@
 		}
 
 		if (blockEl.el) {
-			var btns = blockEl.el.find('a.cke_button')
-			
-			for (var i=0, len=btns.count(); i<len; i++ ){
-				btns.getItem(i).removeClass('cke_button_on').addClass('cke_button_off')
-			}
 			if (elType === 'ul' || elType === 'ol') {
+				blockEl.el.setStyle('width', '84px')
+				blockEl.el.setHtml( renderLineGroupBlock.call(editor, true, elType) )
+				var btns = blockEl.el.find('a.cke_button')
+				for (var i=0, len=btns.count(); i<len; i++ ){
+					btns.getItem(i).removeClass('cke_button_on').addClass('cke_button_off')
+				}
 				blockEl.el.findOne('a[data-l=' + elType + ']').addClass('cke_button_on')
+			} else {
+				blockEl.el.setStyle('width', '56px')
+				blockEl.el.setHtml( renderLineGroupBlock.call(editor) )
+				var btns = blockEl.el.find('a.cke_button')
+				for (var i=0, len=btns.count(); i<len; i++ ){
+					btns.getItem(i).removeClass('cke_button_on').addClass('cke_button_off')
+				}
 			}
-		}
+		}	
 
 	}
 
@@ -922,7 +942,7 @@
 			if ( editor.ui.addButton ) {
 				if (editor.config.redesignedTextEditor) {
 					editor.ui.add( toolbarName, CKEDITOR.UI_PANELBUTTON, {
-						//label: 'todo',
+						label: '',
 						// editorFocus: 0,
 						modes: { wysiwyg: 1 },
 						toolbar: 'list,30',
@@ -936,7 +956,12 @@
 							blockEl.el = block.element;
 							block.autoSize = true;
 							block.element.addClass( 'cke_linegroupblock' );
-							block.element.setStyle( 'width', '62px' ); // span(28px) * 2 + padding
+							block.element.setStyles({
+								'width': '84px',
+								'overflow': 'hidden',
+								'white-space': 'nowrap',
+								'outline': 'none'
+							}); // span(28px) * 2 + padding
 							block.element.setHtml( renderLineGroupBlock.apply(editor) );
 							block.element.getDocument().getBody().setStyle('overflow', 'hidden');
 

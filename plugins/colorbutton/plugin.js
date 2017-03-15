@@ -89,6 +89,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 					block.element.addClass( 'cke_colorblock' );
 					// Set width for the block manually
 					block.element.setStyle( 'width', '94px' );
+					block.element.setStyle( 'outline', 'none' );
 					block.element.setHtml( renderColors( panel, type, colorBoxId ) );
 					// The block should not have scrollbars (#5933, #6056)
 					block.element.getDocument().getBody().setStyle( 'overflow', 'hidden' );
@@ -230,7 +231,7 @@ CKEDITOR.plugins.add( 'colorbutton', {
 			} );
 			// end clickFn
 
-			output.push( '<table style="table-layout: fixed; padding: 3px;" role="presentation" cellspacing=0 cellpadding=0>' );
+			output.push( '<table class="ck_btn_with_gray_border_top" style="table-layout: fixed; padding: 3px;" role="presentation" cellspacing=0 cellpadding=0>' );
 
 			// Render the color boxes.
 			for ( var i = 0, len = colors.length; i < len; i++ ) {

@@ -184,12 +184,20 @@
 	};
 
 // The html
+	var status = {
+		nowAlignment: '',
+	};
 	function renderJustifyGroupBlock() {
     var editor= this;
 
-    var reHtml = '<table style="table-layout: fixed;overflow: hidden;">';
+    var reHtml = '';
 
     var clickFn = CKEDITOR.tools.addFunction(function(type){
+			if (status.nowAlignment === type) {
+				editor.focus();
+				editor.forceNextSelectionCheck();
+				return
+			}
       switch(type) {
         case 'left':
           editor.execCommand('justifyleft');
@@ -212,10 +220,10 @@
 			centerStyle = CKEDITOR.skin.getIconStyle('justifycenter', false),
 			justifyStyle = CKEDITOR.skin.getIconStyle('justifyblock', false);
 
-    reHtml += '<tr><td><a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'left\')" data-align="left"><span class="cke_button_icon cke_button__justifyleft_icon" style="' + leftStyle + '"></span></a>'
-    reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'center\')" data-align="center"><span class="cke_button_icon cke_button__justifycenter_icon" style="' + centerStyle + '"></span></a>'
-		reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'right\')" data-align="right"><span class="cke_button_icon cke_button__justifyright_icon" style="' + rightStyle + '"></span></a>'
-		reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'justify\')" data-align="justify"><span class="cke_button_icon cke_button__justifyblock_icon" style="' + justifyStyle + '"></span></a><td><tr></table>'
+    reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'left\')" data-align="left" style="float: left;outline: none;"><span class="cke_button_icon cke_button__justifyleft_icon" style="' + leftStyle + '"></span></a>'
+    reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'center\')" data-align="center" style="float: left;outline: none;"><span class="cke_button_icon cke_button__justifycenter_icon" style="' + centerStyle + '"></span></a>'
+		reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'right\')" data-align="right" style="float: left;outline: none;"><span class="cke_button_icon cke_button__justifyright_icon" style="' + rightStyle + '"></span></a>'
+		reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'justify\')" data-align="justify" style="float: left;outline: none;"><span class="cke_button_icon cke_button__justifyblock_icon" style="' + justifyStyle + '"></span></a>'
 
     return reHtml
   }
@@ -241,6 +249,8 @@
 			'style': style,
 			'class': 'cke_button_icon cke_button__' + cla + '_icon',
 		})
+
+		status.nowAlignment = elAlignment === 'block' ? 'justify' : elAlignment;
 
 		if (blockEl.el) {
 			var btns = blockEl.el.find('a.cke_button')
@@ -296,7 +306,12 @@
 							blockEl.el = block.element;
 							block.autoSize = true;
 							block.element.addClass( 'cke_justifygroupblock' );
-							block.element.setStyle( 'width', '122px' ); // span(28px) * 4 + padding
+							block.element.setStyles({
+								'width': '112px',
+								'overflow': 'hidden',
+								'white-space': 'nowrap',
+								'outline': 'none'
+							}); // span(28px) * 4 + padding
 							block.element.setHtml( renderJustifyGroupBlock.call(editor) );
 							block.element.getDocument().getBody().setStyle('overflow', 'hidden');
 
