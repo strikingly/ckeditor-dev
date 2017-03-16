@@ -50,7 +50,7 @@ panel contents and color panels check menu.css and colorpanel.css.
    	height: 100px;
    	overflow: hidden;
 
-   	border-radius: 3px;
+   	border-radius: 0 0 3px 3px;
 
     box-shadow: 0 0 3px rgba(0,0,0,.15);
 }

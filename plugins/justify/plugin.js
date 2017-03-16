@@ -220,10 +220,11 @@
 			centerStyle = CKEDITOR.skin.getIconStyle('justifycenter', false),
 			justifyStyle = CKEDITOR.skin.getIconStyle('justifyblock', false);
 
-    reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'left\')" data-align="left" style="float: left;outline: none;"><span class="cke_button_icon cke_button__justifyleft_icon" style="' + leftStyle + '"></span></a>'
-    reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'center\')" data-align="center" style="float: left;outline: none;"><span class="cke_button_icon cke_button__justifycenter_icon" style="' + centerStyle + '"></span></a>'
-		reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'right\')" data-align="right" style="float: left;outline: none;"><span class="cke_button_icon cke_button__justifyright_icon" style="' + rightStyle + '"></span></a>'
-		reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'justify\')" data-align="justify" style="float: left;outline: none;"><span class="cke_button_icon cke_button__justifyblock_icon" style="' + justifyStyle + '"></span></a>'
+
+    reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'left\')" data-align="left" style="float: left;outline: none;" title="' + editor.lang.justify.left + '"><span class="cke_button_icon cke_button__justifyleft_icon" style="' + leftStyle + '"></span></a>'
+    reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'center\')" data-align="center" style="float: left;outline: none;" title="' + editor.lang.justify.center + '"><span class="cke_button_icon cke_button__justifycenter_icon" style="' + centerStyle + '"></span></a>'
+		reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'right\')" data-align="right" style="float: left;outline: none;" title="' + editor.lang.justify.right + '"><span class="cke_button_icon cke_button__justifyright_icon" style="' + rightStyle + '"></span></a>'
+		reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'justify\')" data-align="justify" style="float: left;outline: none;" title="' + editor.lang.justify.block + '"><span class="cke_button_icon cke_button__justifyblock_icon" style="' + justifyStyle + '"></span></a>'
 
     return reHtml
   }
@@ -293,7 +294,7 @@
 			if ( editor.ui.addButton ) {
 				if (editor.config.alignmentDropdown) {
 					editor.ui.add( toolbarName, CKEDITOR.UI_PANELBUTTON, {
-						label: '', // remove tooltip
+						label: editor.lang.justify.label,
 						modes: { wysiwyg: 1 },
 						toolbar: 'justify,50',
 						editorFocus: 0,

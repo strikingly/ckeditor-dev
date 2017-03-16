@@ -69,10 +69,9 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				}
 				var iconStyles = config.colorButton_iconStyles(computedColor)
 				span.setStyles(iconStyles)
+				span.setAttribute('title', (editor.lang.colorbutton.textColorTitle || ''))
 			})	
 			editor.ui.add( name, CKEDITOR.UI_PANELBUTTON, {
-				label: '', // remove tooltip
-				title: title,
 				modes: { wysiwyg: 1 },
 				editorFocus: 0,
 				toolbar: 'colors,' + order,

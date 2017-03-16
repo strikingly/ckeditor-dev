@@ -138,7 +138,10 @@ CKEDITOR.plugins.add( 'basicstyles', {
 			span.setText('...')
 			span.setStyles({
 				'color': 'white',
-				'text-align': 'center'
+				'text-align': 'center',
+				'font-size': '18px',
+				'position': 'relative',
+				'top': '-6px'
 			})
 			if (arrow) {
 				arrow.remove()
