@@ -96,14 +96,16 @@ a.cke_button
 .cke_rtl .cke_button:first-child
 {
 	/* Don't distort parent's rounded border. */
-	border-radius: 0 2px 2px 0;
+	/*border-radius: 0 2px 2px 0;*/
+	border-radius: 0;
 }
 
 .cke_ltr .cke_button:first-child,
 .cke_rtl .cke_button:last-child
 {
 	/* Don't distort parent's rounded border. */
-	border-radius: 2px 0 0 2px;
+	/*border-radius: 2px 0 0 2px;*/
+	border-radius: 0;
 }
 
 .cke_rtl .cke_button
@@ -373,4 +375,7 @@ a.cke_toolbox_collapser
 /* add hand cursor for all ck buttons */
 a.cke_button, a.cke_menubutton {
   cursor: pointer;
+}
+a.cke_button:focus {
+	outline: none;
 }

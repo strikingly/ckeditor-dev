@@ -104,7 +104,7 @@ CKEDITOR.plugins.add( 'basicstyles', {
 		function renderScriptGroupBlock() {
 			var editor= this;
 
-			var reHtml = '<table style="table-layout: fixed;overflow: hidden;">';
+			var reHtml = '';
 
 			var clickFn = CKEDITOR.tools.addFunction(function(type){
 				switch(type) {
@@ -120,8 +120,8 @@ CKEDITOR.plugins.add( 'basicstyles', {
 			var subStyle = CKEDITOR.skin.getIconStyle('subscript', false),
 				supStyle = CKEDITOR.skin.getIconStyle('superscript', false);
 
-			reHtml += '<tr><td><a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'sub\')" data-type="sub"><span class="cke_button_icon cke_button__subscript_icon" style="' + subStyle + '"></span></a>'
-			reHtml += '<a class="cke_button" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'sup\')" data-type="sup"><span class="cke_button_icon cke_button__superscript_icon" style="' + supStyle + '"></span></a></td></tr></table>'
+			reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'sub\')" data-type="sub" style="float: left;outline: none;"><span class="cke_button_icon cke_button__subscript_icon" style="' + subStyle + '"></span></a>'
+			reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'sup\')" data-type="sup" style="float: left;outline: none;"><span class="cke_button_icon cke_button__superscript_icon" style="' + supStyle + '"></span></a>'
 
 			return reHtml
 		}
@@ -138,7 +138,10 @@ CKEDITOR.plugins.add( 'basicstyles', {
 			span.setText('...')
 			span.setStyles({
 				'color': 'white',
-				'text-align': 'center'
+				'text-align': 'center',
+				'font-size': '18px',
+				'position': 'relative',
+				'top': '-6px'
 			})
 			if (arrow) {
 				arrow.remove()
@@ -175,7 +178,12 @@ CKEDITOR.plugins.add( 'basicstyles', {
 				blockEl.el = block.element;
 				block.autoSize = true;
 				block.element.addClass( 'cke_scriptgroupblock' );
-				block.element.setStyle( 'width', '62px' ); // span(28px) * 2 + padding
+				block.element.setStyles({
+					'width': '56px',
+					'overflow': 'hidden',
+					'white-space': 'nowrap',
+					'outline': 'none'
+				}); // span(28px) * 2 + paddin
 				block.element.setHtml( renderScriptGroupBlock.call(editor) );
 				block.element.getDocument().getBody().setStyle('overflow', 'hidden');
 
