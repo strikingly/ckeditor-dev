@@ -58,6 +58,9 @@ CKEDITOR.plugins.add( 'colorbutton', {
 
 			editor.on('selectionChange', function(e) {
 				var btn = editor.ui.get(name)
+				if (!btn) {
+					return
+				}
 				var element = CKEDITOR.document.getById( btn._.id );
 				var span = element.find('.cke_button_icon').getItem(0)
 				if ( editor.config.advancedEditor ) {
