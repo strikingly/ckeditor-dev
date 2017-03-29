@@ -131,6 +131,9 @@ CKEDITOR.plugins.add( 'basicstyles', {
 			var el = editor.getSelection().getStartElement();
 
 			var btn = editor.ui.get(toolbarName);
+			if (!btn) {
+				return
+			}
 			var element = CKEDITOR.document.getById(btn._.id);
 			var span = element.find('.cke_button_icon').getItem(0);
 			var arrow = element.find('.cke_button_arrow').getItem(0);
