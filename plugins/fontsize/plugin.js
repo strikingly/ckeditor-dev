@@ -32,7 +32,7 @@ CKEDITOR.plugins.add( 'fontsize', {
 					var parent = element.getParent(),
 						pName = parent.getName(),
 						// More reliable way on checking whether the div is container or not
-						isContainer = parent.getAttribute('contenteditable') && pName === 'div'
+						isContainer = parent.getAttribute('contenteditable') && pName === 'div' && elName !== 'ul' && elName !== 'ol'
 
 					if(elName === 'p' || elName === 'li' || isContainer) {
 						return element;
