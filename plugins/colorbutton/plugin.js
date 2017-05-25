@@ -112,23 +112,29 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				onOpen: function() {
 					var doc = this._.panel._.iframe.getFrameDocument()
 
-					// highlight current color
-					var path = editor.elementPath();
-					var firstBlock = path.block || path.blockLimit;
-					var activeItem = doc.find('.cke_coloricon_active').getItem(0)
-					if (activeItem) activeItem.removeClass('cke_coloricon_active')
-					var defaultTr = doc.getById('cke_coloricon_default')
-					defaultTr.hide()
-					var colorNames = config.colorButton_colors.map(function(color) {return color[0]})
-					colorNames.push('custom1', 'custom2')
-					colorNames.some(function(colorName) {
-						var colorClass = config.colorButton_colorClassNamePattern.replace('%s', colorName)
-						if (firstBlock.hasClass(colorClass)) {
-							defaultTr.show()
-							doc.find('.cke_coloricon_' + colorName).getItem(0).addClass('cke_coloricon_active')
-							return true
-						}
-					})
+					if (editor.config.advancedEditor) {
+						// on advanced-text-editor
+						var activeItem = doc.find('.cke_coloricon_active').getItem(0)
+						if (activeItem) activeItem.removeClass('cke_coloricon_active')
+					} else {
+						// highlight current color
+						var path = editor.elementPath();
+						var firstBlock = path.block || path.blockLimit;
+						var activeItem = doc.find('.cke_coloricon_active').getItem(0)
+						if (activeItem) activeItem.removeClass('cke_coloricon_active')
+						var defaultTr = doc.getById('cke_coloricon_default')
+						defaultTr.hide()
+						var colorNames = config.colorButton_colors.map(function(color) {return color[0]})
+						colorNames.push('custom1', 'custom2')
+						colorNames.some(function(colorName) {
+							var colorClass = config.colorButton_colorClassNamePattern.replace('%s', colorName)
+							if (firstBlock.hasClass(colorClass)) {
+								defaultTr.show()
+								doc.find('.cke_coloricon_' + colorName).getItem(0).addClass('cke_coloricon_active')
+								return true
+							}
+						})
+					}
 
 					// enable custom color
 					var customColors = config.colorButton_getCustomColors()
@@ -193,21 +199,36 @@ CKEDITOR.plugins.add( 'colorbutton', {
 				editor.fire( 'saveSnapshot' );
 
 				if (editor.config.advancedEditor) {
-					var colorStyle = config[ 'colorButton_' + type + 'Style' ];
-					// Clean up any conflicting style within the range.
-					classNames.map(function(className) {
-						editor.removeStyle( new CKEDITOR.style( colorStyle, {className: className}))
-					});
+					var range = editor.createRange();
+					var selection = editor.getSelection()
 
-					if ( color ) {
-						// get classname
-						var colorClassName = config.colorButton_colorClassNamePattern.replace('%s', color);
-						
-						colorStyle.childRule = function( element ) {
-							// Fore color style must be applied inside links instead of around it. (#4772,#6908)
-							return !( element.is( 'a' ) || element.getElementsByTag( 'a' ).count() ) || isUnstylable( element );
-						};
-						editor.applyStyle( new CKEDITOR.style( colorStyle, { className: colorClassName } ) );
+					var colorStyle = config[ 'colorButton_' + type + 'Style' ];
+					if (color === 'default' && !selection.getSelectedText()) {
+						range.selectNodeContents( editor.editable() );
+						selection.selectRanges( [ range ] );
+
+						// Clean up any conflicting style within the range.
+						classNames.map(function(className) {
+							editor.removeStyle( new CKEDITOR.style( colorStyle, {className: className}))
+						});
+
+						selection.removeAllRanges()
+					} else {
+						// Clean up any conflicting style within the range.
+						classNames.map(function(className) {
+							editor.removeStyle( new CKEDITOR.style( colorStyle, {className: className}))
+						});
+
+						if ( color ) {
+							// get classname
+							var colorClassName = config.colorButton_colorClassNamePattern.replace('%s', color);
+							
+							colorStyle.childRule = function( element ) {
+								// Fore color style must be applied inside links instead of around it. (#4772,#6908)
+								return !( element.is( 'a' ) || element.getElementsByTag( 'a' ).count() ) || isUnstylable( element );
+							};
+							editor.applyStyle( new CKEDITOR.style( colorStyle, { className: colorClassName } ) );
+						}
 					}
 				} else {
 					var range = editor.createRange();
