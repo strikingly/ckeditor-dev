@@ -819,12 +819,7 @@
 		var ulstyle = CKEDITOR.skin.getIconStyle('bulletedlist', false),
 			olstyle = CKEDITOR.skin.getIconStyle('numberedlist', false);
 			
-    var clickFn = CKEDITOR.tools.addFunction(function(type, force){
-			if (status.nowType === type && !force) {
-				editor.focus();
-				editor.forceNextSelectionCheck();
-				return
-			}
+    var clickFn = CKEDITOR.tools.addFunction(function(type){
       // type: 'ul' or 'ol' 
       switch(type) {
         case 'ul':
@@ -839,10 +834,6 @@
 		reHtml = '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ul\')" hidefocus=true data-l="ul" style="float: left;outline: none;" title="' + editor.lang.list.bulletedlist + '"><span class="cke_button_icon cke_button__bulletedlist_icon" style="' + ulstyle + '"></span></a>';
 		
 		reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'ol\')" hidefocus=true data-l="ol" style="float: left;outline: none;" title="' + editor.lang.list.numberedlist + '"><span class="cke_button_icon cke_button__numberedlist_icon" style="' + olstyle + '"></span></a>';
-
-		if (shouldAddRemoveBtn) {
-			reHtml += '<a class="cke_button ck_btn_with_gray_border_top cke_button_off" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'' + nowType + '\', \'1\')" hidefocus=true style="float: left;outline: none;" title="' + editor.lang.list.removeformat + '"><span class="cke_button_icon" style="\'font-size\': 12px;transform: rotate(45deg);color: white;text-align: center;line-height: 15px;">+</span></a>';
-		}
 
 		return reHtml
   }
@@ -895,21 +886,14 @@
 		}
 
 		if (blockEl.el) {
+			blockEl.el.setStyle('width', '56px')
+			blockEl.el.setHtml( renderLineGroupBlock.call(editor) )
+			var btns = blockEl.el.find('a.cke_button')
+			for (var i=0, len=btns.count(); i<len; i++ ){
+				btns.getItem(i).removeClass('cke_button_on').addClass('cke_button_off')
+			}
 			if (elType === 'ul' || elType === 'ol') {
-				blockEl.el.setStyle('width', '84px')
-				blockEl.el.setHtml( renderLineGroupBlock.call(editor, true, elType) )
-				var btns = blockEl.el.find('a.cke_button')
-				for (var i=0, len=btns.count(); i<len; i++ ){
-					btns.getItem(i).removeClass('cke_button_on').addClass('cke_button_off')
-				}
 				blockEl.el.findOne('a[data-l=' + elType + ']').addClass('cke_button_on')
-			} else {
-				blockEl.el.setStyle('width', '56px')
-				blockEl.el.setHtml( renderLineGroupBlock.call(editor) )
-				var btns = blockEl.el.find('a.cke_button')
-				for (var i=0, len=btns.count(); i<len; i++ ){
-					btns.getItem(i).removeClass('cke_button_on').addClass('cke_button_off')
-				}
 			}
 		}	
 	}
