@@ -203,11 +203,10 @@ CKEDITOR.plugins.add( 'colorbutton', {
 					var selection = editor.getSelection()
 
 					var colorStyle = config[ 'colorButton_' + type + 'Style' ];
-					if (color === 'default' && !selection.getSelectedText()) {
-						range.selectNodeContents( editor.editable() );
-						selection.selectRanges( [ range ] );
-
-						// Clean up any conflicting style within the range.
+					if (color === 'default') {
+						// select all contents
+						editor.document.$.execCommand( 'SelectAll', false, null );
+						// Clean up any conflicting style within all contents.
 						classNames.map(function(className) {
 							editor.removeStyle( new CKEDITOR.style( colorStyle, {className: className}))
 						});
