@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or http://ckeditor.com/license
 */
@@ -19,7 +19,7 @@ CKEDITOR.plugins.setLang( 'link', 'en', {
 	anchorName: 'By Anchor Name',
 	charset: 'Linked Resource Charset',
 	cssClasses: 'Stylesheet Classes',
-	emailAddress: 'E-Mail Address',
+	emailAddress: 'Address',
 	emailBody: 'Message Body',
 	emailSubject: 'Message Subject',
 	id: 'Id',
@@ -32,6 +32,9 @@ CKEDITOR.plugins.setLang( 'link', 'en', {
 	name: 'Name',
 	noAnchors: '(No anchors available in the document)',
 	noEmail: 'Please type the e-mail address',
+	invalidEmail: 'Invalid email address',
+	uploadDocument: 'Upload document',
+	openInNewTab: 'Open in new tab',
 	noUrl: 'Please type the link URL',
 	other: '<other>',
 	popupDependent: 'Dependent (Netscape)',
@@ -54,12 +57,19 @@ CKEDITOR.plugins.setLang( 'link', 'en', {
 	targetFrameName: 'Target Frame Name',
 	targetPopup: '<popup window>',
 	targetPopupName: 'Popup Window Name',
-	title: 'Link',
+	title: 'Link to',
 	toAnchor: 'Link to anchor in the text',
-	toEmail: 'E-mail',
-	toUrl: 'URL',
+	toEmail: 'Email',
+	toWeb: 'Web',
+	toDocument: 'Document',
 	toolbar: 'Link',
 	type: 'Link Type',
 	unlink: 'Unlink',
-	upload: 'Upload'
+	upload: 'Upload file',
+	url: 'URL',
+	urlPlaceholder: 'e.g. http://abc.com OR #2 (section number)',
+	emailPlaceholder: 'e.g. john@example.com',
+	removeLink: 'Remove Link',
+	removeEmail: 'Remove Email',
+	removeDocument: 'Remove Document'
 } );

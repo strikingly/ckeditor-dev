@@ -354,6 +354,13 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 			} );
 		}
 
+		if ( definition.onRemove ) {
+			this.on( 'remove', function( evt ) {
+				if ( definition.onRemove.call( this, evt ) === false )
+					evt.data.hide = false;
+			} );
+		}
+
 		var me = this;
 
 		// Iterates over all items inside all content in the dialog, calling a
@@ -867,7 +874,7 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 
 			// Set z-index.
 			if ( CKEDITOR.dialog._.currentZIndex === null )
-				CKEDITOR.dialog._.currentZIndex = this._.editor.config.baseFloatZIndex;
+				CKEDITOR.dialog._.currentZIndex = this._.editor.config.dialogZIndex;
 			this._.element.getFirst().setStyle( 'z-index', CKEDITOR.dialog._.currentZIndex += 10 );
 
 			// Maintain the dialog ordering and dialog cover.
@@ -879,7 +886,7 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 			} else {
 				this._.parentDialog = CKEDITOR.dialog._.currentTop;
 				var parentElement = this._.parentDialog.getElement().getFirst();
-				parentElement.$.style.zIndex -= Math.floor( this._.editor.config.baseFloatZIndex / 2 );
+				parentElement.$.style.zIndex -= Math.floor( this._.editor.config.dialogZIndex / 2 );
 				CKEDITOR.dialog._.currentTop = this;
 			}
 
@@ -1075,7 +1082,7 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 				hideCover( this._.editor );
 			else {
 				var parentElement = this._.parentDialog.getElement().getFirst();
-				parentElement.setStyle( 'z-index', parseInt( parentElement.$.style.zIndex, 10 ) + Math.floor( this._.editor.config.baseFloatZIndex / 2 ) );
+				parentElement.setStyle( 'z-index', parseInt( parentElement.$.style.zIndex, 10 ) + Math.floor( this._.editor.config.dialogZIndex / 2 ) );
 			}
 			CKEDITOR.dialog._.currentTop = this._.parentDialog;
 
@@ -1661,6 +1668,30 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 			return retval;
 		} )(),
 
+		removeButton: ( function() {
+			var retval = function( editor, override ) {
+					override = override || {};
+					return CKEDITOR.tools.extend( {
+						id: 'remove',
+						type: 'button',
+						label: 'Remove Link',
+						'class': 'cke_dialog_ui_button_remove',
+						onClick: function( evt ) {
+							var dialog = evt.data.dialog;
+							if ( dialog.fire( 'remove', { hide: true } ).hide !== false )
+								dialog.hide();
+						}
+					}, override, true );
+				};
+			retval.type = 'button';
+			retval.override = function( override ) {
+				return CKEDITOR.tools.extend( function( editor ) {
+					return retval( editor, override );
+				}, { type: 'button' }, true );
+			};
+			return retval;
+		} )(),
+
 		/**
 		 * Registers a dialog UI element.
 		 *
@@ -2110,14 +2141,14 @@ CKEDITOR.DIALOG_STATE_BUSY = 2;
 		var config = editor.config,
 			backgroundColorStyle = config.dialog_backgroundCoverColor || 'white',
 			backgroundCoverOpacity = config.dialog_backgroundCoverOpacity,
-			baseFloatZIndex = config.baseFloatZIndex,
-			coverKey = CKEDITOR.tools.genKey( backgroundColorStyle, backgroundCoverOpacity, baseFloatZIndex ),
+			dialogZIndex = config.dialogZIndex,
+			coverKey = CKEDITOR.tools.genKey( backgroundColorStyle, backgroundCoverOpacity, dialogZIndex ),
 			coverElement = covers[ coverKey ];
 
 		if ( !coverElement ) {
 			var html = [
 				'<div tabIndex="-1" style="position: ', ( CKEDITOR.env.ie6Compat ? 'absolute' : 'fixed' ),
-				'; z-index: ', baseFloatZIndex,
+				'; z-index: ', dialogZIndex,
 				'; top: 0px; left: 0px; ',
 				( !CKEDITOR.env.ie6Compat ? 'background-color: ' + backgroundColorStyle : '' ),
 				'" class="cke_dialog_background_cover">'

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
@@ -674,6 +674,11 @@
 			// 1. Upon "selectionchange" event from the editable element. (which might be faked event fired by our code)
 			// 2. After the accomplish of keyboard and mouse events.
 			editable.attachListener( editable, 'selectionchange', checkSelectionChange, editor );
+			// ios only fires selectionchange on document
+			editable.attachListener( doc, 'selectionchange', function() {
+				if (document.activeElement !== editable.$) return;
+				checkSelectionChange.apply(this, arguments);
+			}, editor );
 			editable.attachListener( editable, 'keyup', checkSelectionChangeTimeout, editor );
 			// Always fire the selection change on focus gain.
 			// On Webkit do this on DOMFocusIn, because the selection is unlocked on it too and

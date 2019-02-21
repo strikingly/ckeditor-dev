@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
@@ -59,7 +59,13 @@
 			// Add the link and unlink buttons.
 			editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'link', {
 				allowedContent: allowed,
-				requiredContent: required
+				requiredContent: required,
+				contextSensitive: true,
+				refresh: function( editor, path ) {
+					var state = path.contains( 'a' ) ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF;
+					this.setState( state );
+					return true;
+				}
 			} ) );
 			editor.addCommand( 'anchor', new CKEDITOR.dialogCommand( 'anchor', {
 				allowedContent: 'a[!name,id]',
@@ -212,22 +218,6 @@
 		functionCallProtectedEmailLinkRegex = /^javascript:([^(]+)\(([^)]+)\)$/,
 		popupRegex = /\s*window.open\(\s*this\.href\s*,\s*(?:'([^']*)'|null)\s*,\s*'([^']*)'\s*\)\s*;\s*return\s*false;*\s*/,
 		popupFeaturesRegex = /(?:^|,)([^=]+)=(\d+|yes|no)/gi;
-
-	var advAttrNames = {
-		id: 'advId',
-		dir: 'advLangDir',
-		accessKey: 'advAccessKey',
-		// 'data-cke-saved-name': 'advName',
-		name: 'advName',
-		lang: 'advLangCode',
-		tabindex: 'advTabIndex',
-		title: 'advTitle',
-		type: 'advContentType',
-		'class': 'advCSSClasses',
-		charset: 'advCharset',
-		style: 'advStyles',
-		rel: 'advRel'
-	};
 
 	function unescapeSingleQuote( str ) {
 		return str.replace( /\\'/g, '\'' );
@@ -464,14 +454,15 @@
 				}
 			}
 
+			// Load target and popup settings.
+			var newTab = false;
+			if ( element ) {
+				var target = element.getAttribute( 'target' );
+				newTab = target === '_blank';
+			}
+
 			if ( !retval.type ) {
-				if ( ( anchorMatch = href.match( anchorRegex ) ) ) {
-					retval.type = 'anchor';
-					retval.anchor = {};
-					retval.anchor.name = retval.anchor.id = anchorMatch[ 1 ];
-				}
-				// Protected email link as encoded string.
-				else if ( ( emailMatch = href.match( emailRegex ) ) ) {
+				if ( ( emailMatch = href.match( emailRegex ) ) ) {
 					var subjectMatch = href.match( emailSubjectRegex ),
 						bodyMatch = href.match( emailBodyRegex );
 
@@ -482,61 +473,19 @@
 					bodyMatch && ( email.body = decodeURIComponent( bodyMatch[ 1 ] ) );
 				}
 				// urlRegex matches empty strings, so need to check for href as well.
-				else if ( href && ( urlMatch = href.match( urlRegex ) ) ) {
-					retval.type = 'url';
-					retval.url = {};
-					retval.url.protocol = urlMatch[ 1 ];
-					retval.url.url = urlMatch[ 2 ];
-				}
-			}
-
-			// Load target and popup settings.
-			if ( element ) {
-				var target = element.getAttribute( 'target' );
-
-				// IE BUG: target attribute is an empty string instead of null in IE if it's not set.
-				if ( !target ) {
-					var onclick = element.data( 'cke-pa-onclick' ) || element.getAttribute( 'onclick' ),
-						onclickMatch = onclick && onclick.match( popupRegex );
-
-					if ( onclickMatch ) {
-						retval.target = {
-							type: 'popup',
-							name: onclickMatch[ 1 ]
-						};
-
-						var featureMatch;
-						while ( ( featureMatch = popupFeaturesRegex.exec( onclickMatch[ 2 ] ) ) ) {
-							// Some values should remain numbers (#7300)
-							if ( ( featureMatch[ 2 ] == 'yes' || featureMatch[ 2 ] == '1' ) && !( featureMatch[ 1 ] in { height: 1, width: 1, top: 1, left: 1 } ) )
-								retval.target[ featureMatch[ 1 ] ] = true;
-							else if ( isFinite( featureMatch[ 2 ] ) )
-								retval.target[ featureMatch[ 1 ] ] = featureMatch[ 2 ];
-						}
+				else if ( href ) {
+					if ( /^https?:\/\/[^.]+\.strikinglycdn\.com/.test( href ) ) {
+						retval.type = 'document';
+						retval.document = {};
+						retval.document.url = href;
+						retval.document.openInNewTab = newTab;
+					} else {
+						retval.type = 'url';
+						retval.web = {};
+						retval.web.url = href;
+						retval.web.openInNewTab = newTab;
 					}
-				} else {
-					retval.target = {
-						type: target.match( selectableTargets ) ? target : 'frame',
-						name: target
-					};
 				}
-
-				var advanced = {};
-
-				for ( var a in advAttrNames ) {
-					var val = element.getAttribute( a );
-
-					if ( val )
-						advanced[ advAttrNames[ a ] ] = val;
-				}
-
-				var advName = element.data( 'cke-saved-name' ) || advanced.advName;
-
-				if ( advName )
-					advanced.advName = advName;
-
-				if ( !CKEDITOR.tools.isEmpty( advanced ) )
-					retval.advanced = advanced;
 			}
 
 			return retval;
@@ -572,10 +521,10 @@
 			// Compose the URL.
 			switch ( data.type ) {
 				case 'url':
-					var protocol = ( data.url && data.url.protocol !== undefined ) ? data.url.protocol : 'http://',
-						url = ( data.url && CKEDITOR.tools.trim( data.url.url ) ) || '';
+					var url = ( data.web && CKEDITOR.tools.trim( data.web.url ) ) || '';
+					if ( !/^#|^(http|https|ftp|mailto|tel|fb|skype|itms-services|javascript|sms|irc):/i.test( url ) ) url = 'http://' + url;
 
-					set[ 'data-cke-saved-href' ] = ( url.indexOf( '/' ) === 0 ) ? url : protocol + url;
+					set[ 'data-cke-saved-href' ] = url;
 
 					break;
 				case 'anchor':
@@ -583,6 +532,12 @@
 						id = ( data.anchor && data.anchor.id );
 
 					set[ 'data-cke-saved-href' ] = '#' + ( name || id || '' );
+
+					break;
+				case 'document':
+					var url = ( data.document && CKEDITOR.tools.trim( data.document.url ) ) || '';
+
+					set[ 'data-cke-saved-href' ] = url;
 
 					break;
 				case 'email':
@@ -630,47 +585,9 @@
 			}
 
 			// Popups and target.
-			if ( data.target ) {
-				if ( data.target.type == 'popup' ) {
-					var onclickList = [
-							'window.open(this.href, \'', data.target.name || '', '\', \''
-						],
-						featureList = [
-							'resizable', 'status', 'location', 'toolbar', 'menubar', 'fullscreen', 'scrollbars', 'dependent'
-						],
-						featureLength = featureList.length,
-						addFeature = function( featureName ) {
-							if ( data.target[ featureName ] )
-								featureList.push( featureName + '=' + data.target[ featureName ] );
-						};
-
-					for ( var i = 0; i < featureLength; i++ )
-						featureList[ i ] = featureList[ i ] + ( data.target[ featureList[ i ] ] ? '=yes' : '=no' );
-
-					addFeature( 'width' );
-					addFeature( 'left' );
-					addFeature( 'height' );
-					addFeature( 'top' );
-
-					onclickList.push( featureList.join( ',' ), '\'); return false;' );
-					set[ 'data-cke-pa-onclick' ] = onclickList.join( '' );
-				}
-				else if ( data.target.type != 'notSet' && data.target.name ) {
-					set.target = data.target.name;
-				}
-			}
-
-			// Advanced attributes.
-			if ( data.advanced ) {
-				for ( var a in advAttrNames ) {
-					var val = data.advanced[ advAttrNames[ a ] ];
-
-					if ( val )
-						set[ a ] = val;
-				}
-
-				if ( set.name )
-					set[ 'data-cke-saved-name' ] = set.name;
+			var newTab = data.web.openInNewTab || data.document.openInNewTab
+			if ( newTab ) {
+				set.target = '_blank';
 			}
 
 			// Browser need the "href" fro copy/paste link to work. (#6641)
@@ -683,9 +600,6 @@
 				'data-cke-pa-onclick': 1,
 				'data-cke-saved-name': 1
 			};
-
-			if ( data.advanced )
-				CKEDITOR.tools.extend( removed, advAttrNames );
 
 			// Remove all attributes which are not currently set.
 			for ( var s in set )

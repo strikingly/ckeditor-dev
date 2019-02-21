@@ -100,6 +100,101 @@ CKEDITOR.plugins.add( 'basicstyles', {
 			[ CKEDITOR.CTRL + 73 /*I*/, 'italic' ],
 			[ CKEDITOR.CTRL + 85 /*U*/, 'underline' ]
 		] );
+
+		function renderScriptGroupBlock() {
+			var editor= this;
+
+			var reHtml = '';
+
+			var clickFn = CKEDITOR.tools.addFunction(function(type){
+				switch(type) {
+					case 'sub':
+						editor.execCommand('subscript');
+						break;
+					case 'sup':
+						editor.execCommand('superscript');
+						break;
+				}
+			})
+
+			var subStyle = CKEDITOR.skin.getIconStyle('subscript', false),
+				supStyle = CKEDITOR.skin.getIconStyle('superscript', false);
+
+			reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'sub\')" data-type="sub" style="float: left;outline: none;"><span class="cke_button_icon cke_button__subscript_icon" style="' + subStyle + '"></span></a>'
+			reHtml += '<a class="cke_button ck_btn_with_gray_border_top" onclick="CKEDITOR.tools.callFunction(' + clickFn + ', \'sup\')" data-type="sup" style="float: left;outline: none;"><span class="cke_button_icon cke_button__superscript_icon" style="' + supStyle + '"></span></a>'
+
+			return reHtml
+		}
+
+		function onSelectionChange(toobarName, blockEl) {
+			var editor = this;
+			var el = editor.getSelection().getStartElement();
+
+			var btn = editor.ui.get(toolbarName);
+			if (!btn) {
+				return
+			}
+			var element = CKEDITOR.document.getById(btn._.id);
+			var span = element.find('.cke_button_icon').getItem(0);
+			var arrow = element.find('.cke_button_arrow').getItem(0);
+
+			span.setText('...')
+			span.setStyles({
+				'color': 'white',
+				'text-align': 'center',
+				'font-size': '18px',
+				'position': 'relative',
+				'top': '-6px'
+			})
+			if (arrow) {
+				arrow.remove()
+			}
+
+			var elType = el.getName()
+
+			if (blockEl.el) {
+				var btns = blockEl.el.find('a.cke_button')
+				
+				for (var i=0, len=btns.count(); i<len; i++ ){
+					btns.getItem(i).removeClass('cke_button_on').addClass('cke_button_off')
+				}
+				if (elType === 'sub' || elType === 'sup') {
+					blockEl.el.findOne('a[data-type=' + elType + ']').addClass('cke_button_on')
+				}
+			}
+		}
+
+		var toolbarName = 'ScriptGroup';
+		var blockEl = {};
+		editor.on('selectionChange', onSelectionChange.bind(editor, toolbarName, blockEl));
+		editor.ui.add(toolbarName, CKEDITOR.UI_PANELBUTTON, {
+			label: '', // remove tooltip
+			modes: { wysiwyg: 1 },
+			toolbar: 'script,60',
+			editorFocus: 0,
+			panel: {
+				css: CKEDITOR.skin.getPath( 'editor' ),
+				attributes: { role: 'scriptbox', 'aria-label': '' }
+			},
+
+			onBlock: function( panel, block ) {
+				blockEl.el = block.element;
+				block.autoSize = true;
+				block.element.addClass( 'cke_scriptgroupblock' );
+				block.element.setStyles({
+					'width': '56px',
+					'overflow': 'hidden',
+					'white-space': 'nowrap',
+					'outline': 'none'
+				}); // span(28px) * 2 + paddin
+				block.element.setHtml( renderScriptGroupBlock.call(editor) );
+				block.element.getDocument().getBody().setStyle('overflow', 'hidden');
+
+				CKEDITOR.ui.fire('ready', this);
+
+				onSelectionChange.call(editor, toolbarName, blockEl);
+			}
+		})
 	}
 } );
 

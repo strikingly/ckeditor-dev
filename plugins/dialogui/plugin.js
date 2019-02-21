@@ -139,54 +139,57 @@ CKEDITOR.plugins.add( 'dialogui', {
 				if ( arguments.length < 4 )
 					return;
 
-				var _ = initPrivateObject.call( this, elementDefinition );
-				_.labelId = CKEDITOR.tools.getNextId() + '_label';
-				this._.children = [];
+				var innerHTML = contentHtml;
+				if ( elementDefinition.label ) {
+					var _ = initPrivateObject.call( this, elementDefinition );
+					_.labelId = CKEDITOR.tools.getNextId() + '_label';
+					this._.children = [];
 
-				var innerHTML = function() {
-						var html = [],
-							requiredClass = elementDefinition.required ? ' cke_required' : '';
-						if ( elementDefinition.labelLayout != 'horizontal' ) {
-							html.push(
-								'<label class="cke_dialog_ui_labeled_label' + requiredClass + '" ', ' id="' + _.labelId + '"',
-									( _.inputId ? ' for="' + _.inputId + '"' : '' ),
-									( elementDefinition.labelStyle ? ' style="' + elementDefinition.labelStyle + '"' : '' ) + '>',
-									elementDefinition.label,
-								'</label>',
-								'<div class="cke_dialog_ui_labeled_content"',
-									( elementDefinition.controlStyle ? ' style="' + elementDefinition.controlStyle + '"' : '' ),
-									' role="presentation">',
-									contentHtml.call( this, dialog, elementDefinition ),
-								'</div>' );
-						} else {
-							var hboxDefinition = {
-								type: 'hbox',
-								widths: elementDefinition.widths,
-								padding: 0,
-								children: [ {
-									type: 'html',
-									html: '<label class="cke_dialog_ui_labeled_label' + requiredClass + '"' +
-										' id="' + _.labelId + '"' +
-										' for="' + _.inputId + '"' +
-										( elementDefinition.labelStyle ? ' style="' + elementDefinition.labelStyle + '"' : '' ) + '>' +
-											CKEDITOR.tools.htmlEncode( elementDefinition.label ) +
-										'</label>'
-								},
-								{
-									type: 'html',
-									html: '<span class="cke_dialog_ui_labeled_content"' + ( elementDefinition.controlStyle ? ' style="' + elementDefinition.controlStyle + '"' : '' ) + '>' +
-										contentHtml.call( this, dialog, elementDefinition ) +
-										'</span>'
-								} ]
-							};
-							CKEDITOR.dialog._.uiElementBuilders.hbox.build( dialog, hboxDefinition, html );
-						}
-						return html.join( '' );
-					};
-				var attributes = { role: elementDefinition.role || 'presentation' };
+					innerHTML = function() {
+							var html = [],
+								requiredClass = elementDefinition.required ? ' cke_required' : '';
+							if ( elementDefinition.labelLayout != 'horizontal' ) {
+								html.push(
+									'<label class="cke_dialog_ui_labeled_label' + requiredClass + '" ', ' id="' + _.labelId + '"',
+										( _.inputId ? ' for="' + _.inputId + '"' : '' ),
+										( elementDefinition.labelStyle ? ' style="' + elementDefinition.labelStyle + '"' : '' ) + '>',
+										elementDefinition.label,
+									'</label>',
+									'<div class="cke_dialog_ui_labeled_content"',
+										( elementDefinition.controlStyle ? ' style="' + elementDefinition.controlStyle + '"' : '' ),
+										' role="presentation">',
+										contentHtml.call( this, dialog, elementDefinition ),
+									'</div>' );
+							} else {
+								var hboxDefinition = {
+									type: 'hbox',
+									widths: elementDefinition.widths,
+									padding: 0,
+									children: [ {
+										type: 'html',
+										html: '<label class="cke_dialog_ui_labeled_label' + requiredClass + '"' +
+											' id="' + _.labelId + '"' +
+											' for="' + _.inputId + '"' +
+											( elementDefinition.labelStyle ? ' style="' + elementDefinition.labelStyle + '"' : '' ) + '>' +
+												CKEDITOR.tools.htmlEncode( elementDefinition.label ) +
+											'</label>'
+									},
+									{
+										type: 'html',
+										html: '<span class="cke_dialog_ui_labeled_content"' + ( elementDefinition.controlStyle ? ' style="' + elementDefinition.controlStyle + '"' : '' ) + '>' +
+											contentHtml.call( this, dialog, elementDefinition ) +
+											'</span>'
+									} ]
+								};
+								CKEDITOR.dialog._.uiElementBuilders.hbox.build( dialog, hboxDefinition, html );
+							}
+							return html.join( '' );
+						};
+					var attributes = { role: elementDefinition.role || 'presentation' };
 
-				if ( elementDefinition.includeLabel )
-					attributes[ 'aria-labelledby' ] = _.labelId;
+					if ( elementDefinition.includeLabel )
+						attributes[ 'aria-labelledby' ] = _.labelId;
+				}
 
 				CKEDITOR.ui.dialog.uiElement.call( this, dialog, elementDefinition, htmlList, 'div', null, attributes, innerHTML );
 			},
@@ -1290,7 +1293,7 @@ CKEDITOR.plugins.add( 'dialogui', {
 			 */
 			eventProcessors: {
 				onChange: function( dialog, func ) {
-					if ( !CKEDITOR.env.ie )
+					if ( !CKEDITOR.env.ie || ( CKEDITOR.env.version > 8 ) )
 						return commonEventProcessors.onChange.apply( this, arguments );
 					else {
 						dialog.on( 'load', function() {
