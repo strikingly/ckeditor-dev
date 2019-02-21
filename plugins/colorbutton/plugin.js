@@ -357,7 +357,7 @@ CKEDITOR.config.colorButton_colorClassNamePattern = '%s'
 CKEDITOR.config.colorButton_foreStyle = {
 	element: 'span',
   //styles: { 'color': '#(color)' },
-	attributes: { class: '#(className)' },
+	attributes: { 'class': '#(className)' },
 	overrides: [ {
 		element: 'font', attributes: { 'class': null }
 	} ]
